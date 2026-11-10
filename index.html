@@ -15,7 +15,6 @@
       --primary-hover: #b80710;
       --bg: #0c0d10;
       --surface: #15171e;
-      --surface-elevated: #1e212b;
       --border: rgba(255, 255, 255, 0.08);
       --text: #ffffff;
       --text-muted: #8c909e;
@@ -39,7 +38,7 @@
       padding-bottom: 50px;
     }
 
-    /* تركيز أجهزة التلفاز وريموت الشاشات */
+    /* دعم أسهم الريموت والتلفزيون */
     :focus-visible {
       outline: 3px solid var(--focus-ring) !important;
       outline-offset: 3px !important;
@@ -52,8 +51,8 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      background: linear-gradient(180deg, rgba(12,13,16,0.98) 0%, rgba(12,13,16,0.85) 100%);
-      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(12,13,16,0.98) 0%, rgba(12,13,16,0.88) 100%);
+      backdrop-filter: blur(14px);
       padding: 14px 18px;
       display: flex;
       flex-direction: column;
@@ -74,7 +73,6 @@
       font-size: 1.45rem;
       font-weight: 900;
       color: #fff;
-      letter-spacing: -0.5px;
     }
 
     .brand span { color: var(--primary); }
@@ -127,12 +125,14 @@
       display: flex;
     }
 
+    /* شريط الأقسام الـ 22 المتكامل */
     .categories-bar {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding: 4px 2px;
+      padding: 6px 2px;
       scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
     }
     .categories-bar::-webkit-scrollbar { display: none; }
 
@@ -144,9 +144,11 @@
       border: 1px solid var(--border);
       color: var(--text-muted);
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       font-family: inherit;
+      transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .cat-btn.active, .cat-btn:hover {
@@ -276,9 +278,26 @@
       color: var(--text-muted);
     }
 
-    /* ========================================================
-       نافذة تفاصيل المسلسل بنمط IPTV (Seasons & Episodes Modal)
-       ======================================================== */
+    .load-more-btn {
+      display: block;
+      margin: 30px auto;
+      padding: 12px 32px;
+      border-radius: 25px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .load-more-btn:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* نافذة مواسم وحلقات المسلسل IPTV */
     .iptv-modal {
       position: fixed;
       inset: 0;
@@ -290,15 +309,10 @@
       justify-content: center;
     }
 
-    .iptv-modal.active {
-      display: flex;
-    }
+    .iptv-modal.active { display: flex; }
 
     @media (min-width: 768px) {
-      .iptv-modal {
-        align-items: center;
-        padding: 24px;
-      }
+      .iptv-modal { align-items: center; padding: 24px; }
     }
 
     .iptv-content {
@@ -311,15 +325,11 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
       animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @media (min-width: 768px) {
-      .iptv-content {
-        border-radius: 20px;
-        max-height: 82vh;
-      }
+      .iptv-content { border-radius: 20px; max-height: 82vh; }
     }
 
     @keyframes slideUp {
@@ -337,12 +347,11 @@
     }
 
     .iptv-poster {
-      width: 80px;
-      height: 120px;
-      border-radius: 10px;
+      width: 75px;
+      height: 110px;
+      border-radius: 8px;
       object-fit: cover;
       flex-shrink: 0;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.6);
     }
 
     .iptv-info {
@@ -352,16 +361,8 @@
       gap: 6px;
     }
 
-    .iptv-title {
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #fff;
-    }
-
-    .iptv-subtitle {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
+    .iptv-title { font-size: 1.25rem; font-weight: 800; color: #fff; }
+    .iptv-subtitle { font-size: 0.82rem; color: var(--text-muted); }
 
     .iptv-close {
       position: absolute;
@@ -379,7 +380,6 @@
       cursor: pointer;
     }
 
-    /* شريط المواسم */
     .seasons-nav {
       display: flex;
       gap: 8px;
@@ -410,20 +410,17 @@
       border-color: var(--primary);
     }
 
-    /* شبكة الحلقات */
     .episodes-grid {
       padding: 20px;
       overflow-y: auto;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
       gap: 12px;
       flex: 1;
     }
 
     @media (min-width: 600px) {
-      .episodes-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      }
+      .episodes-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
     }
 
     .ep-card {
@@ -437,8 +434,8 @@
       justify-content: center;
       gap: 8px;
       cursor: pointer;
-      transition: all 0.2s ease;
       text-align: center;
+      transition: all 0.2s ease;
     }
 
     .ep-card:hover {
@@ -447,15 +444,11 @@
       transform: translateY(-2px);
     }
 
-    .ep-number {
-      font-size: 1.1rem;
-      font-weight: 900;
-      color: #fff;
-    }
+    .ep-number { font-size: 1.05rem; font-weight: 900; color: #fff; }
 
     .ep-play-icon {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       background: var(--primary);
       display: flex;
@@ -521,12 +514,7 @@
       gap: 12px;
     }
 
-    .player-title-info {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
+    .player-title-info { display: flex; flex-direction: column; gap: 2px; }
     .player-media-title { font-size: 1.05rem; font-weight: 800; color: #fff; }
     .player-media-sub { font-size: 0.8rem; color: var(--text-muted); }
 
@@ -586,7 +574,6 @@
     .skip-btn span { position: absolute; font-size: 0.65rem; font-weight: 800; bottom: 6px; }
 
     .player-bottom { display: flex; flex-direction: column; gap: 10px; }
-
     .progress-bar-container { display: flex; align-items: center; gap: 12px; }
 
     .time-display {
@@ -672,14 +659,13 @@
 
     .player-toast.show { opacity: 1; }
 
-    /* مؤشر التحميل */
     .loader {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 12px;
-      padding: 60px 20px;
+      padding: 50px 20px;
       color: var(--text-muted);
     }
 
@@ -706,19 +692,17 @@
       </div>
     </div>
 
+    <!-- البحث المباشر في كامل قاعدة البيانات -->
     <div class="search-wrapper">
-      <input type="text" id="searchInput" class="search-input" placeholder="ابحث باسم الفلم أو المسلسل..." />
+      <input type="text" id="searchInput" class="search-input" placeholder="ابحث باسم الفلم أو المسلسل (عربي أو English)..." />
       <div class="search-icon">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       </div>
     </div>
 
+    <!-- شريط الأقسام: يتم بناؤه آلياً بالكامل من السيرفر ليتضمن أكثر من 22 قسماً -->
     <div class="categories-bar" id="categoriesBar">
-      <button class="cat-btn active" data-cat="all">الأحدث الكل</button>
-      <button class="cat-btn" data-cat="movies">الأفلام</button>
-      <button class="cat-btn" data-cat="series">المسلسلات</button>
-      <button class="cat-btn" data-cat="ramadan">مسلسلات رمضان</button>
-      <button class="cat-btn" data-cat="anime">الأنمي والكرتون</button>
+      <button class="cat-btn active" data-slug="">الأحدث الكل</button>
     </div>
   </header>
 
@@ -733,6 +717,8 @@
       <div class="spinner"></div>
       <span>جاري الاتصال بالسيرفر...</span>
     </div>
+
+    <button class="load-more-btn" id="loadMoreBtn" style="display:none;">تحميل المزيد</button>
   </main>
 
   <!-- نافذة مواسم وحلقات المسلسل IPTV -->
@@ -749,10 +735,7 @@
         </button>
       </div>
 
-      <!-- تبويبات المواسم -->
       <div class="seasons-nav" id="seasonsNav"></div>
-
-      <!-- قائمة الحلقات -->
       <div class="episodes-grid" id="episodesGrid"></div>
     </div>
   </div>
@@ -826,14 +809,20 @@
   <script>
     const WORKER_BASE = 'https://mo.m737217130.workers.dev/';
 
-    let allGroupedItems = [];
-    let currentSeriesData = null;
+    let currentPage = 1;
+    let currentCategorySlug = '';
+    let accumulatedPosts = [];
+    let searchDebounce = null;
     let hlsInstance = null;
     let controlsTimeout = null;
 
     const contentGrid = document.getElementById('contentGrid');
     const loader = document.getElementById('loader');
     const searchInput = document.getElementById('searchInput');
+    const sectionHeading = document.getElementById('sectionHeading');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const categoriesBar = document.getElementById('categoriesBar');
+
     const iptvModal = document.getElementById('iptvModal');
     const iptvPoster = document.getElementById('iptvPoster');
     const iptvTitle = document.getElementById('iptvTitle');
@@ -868,22 +857,88 @@
       setTimeout(() => playerToast.classList.remove('show'), 1600);
     }
 
-    // جلب القائمة وتجميع المسلسلات في بوستر واحد نظيف
-    async function loadFeed() {
-      showLoader(true);
+    /* ========================================================
+       1. جلب كافة الأقسام (22 قسماً) من السيرفر وبناء الشريط تلقائياً
+       ======================================================== */
+    async function loadCategories() {
       try {
-        const res = await fetch(`${WORKER_BASE}?action=posts&page=1`);
-        const data = await res.json();
-        const posts = Array.isArray(data) ? data : (data.posts || []);
-        processPostsToIPTV(posts);
+        const res = await fetch(`${WORKER_BASE}?action=categories`);
+        const cats = await res.json();
+        
+        if (Array.isArray(cats) && cats.length > 0) {
+          // نبقي زر "الأحدث الكل" في البداية ونضيف كل أقسام السيرفر
+          categoriesBar.innerHTML = '<button class="cat-btn active" data-slug="">الأحدث الكل</button>';
+          
+          cats.forEach(cat => {
+            const btn = document.createElement('button');
+            btn.className = 'cat-btn';
+            btn.setAttribute('data-slug', cat.slug);
+            btn.textContent = cat.name;
+            categoriesBar.appendChild(btn);
+          });
+        }
       } catch (err) {
-        console.error('Error fetching feed:', err);
+        console.warn('Could not load dynamic categories, falling back to defaults:', err);
+      }
+    }
+
+    // جلب منشورات صفحة معينة
+    async function fetchPosts(page, categorySlug = '') {
+      let url = `${WORKER_BASE}?action=posts&page=${page}`;
+      if (categorySlug) {
+        url += `&category=${categorySlug}`;
+      }
+      const res = await fetch(url);
+      const data = await res.json();
+      return Array.isArray(data) ? data : (data.posts || []);
+    }
+
+    // التحميل الأولي: جلب أول 3 صفحات معاً
+    async function loadInitialFeed(categorySlug = '') {
+      showLoader(true);
+      contentGrid.innerHTML = '';
+      accumulatedPosts = [];
+      currentPage = 3;
+      currentCategorySlug = categorySlug;
+
+      try {
+        const [p1, p2, p3] = await Promise.all([
+          fetchPosts(1, categorySlug),
+          fetchPosts(2, categorySlug),
+          fetchPosts(3, categorySlug)
+        ]);
+        accumulatedPosts = [...p1, ...p2, ...p3];
+        renderFeed(accumulatedPosts);
+        loadMoreBtn.style.display = 'block';
+      } catch (err) {
+        contentGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:#ff5252;">تعذر جلب المحتوى. يرجى المحاولة لاحقاً.</div>`;
       } finally {
         showLoader(false);
       }
     }
 
-    function processPostsToIPTV(posts) {
+    // تحميل المزيد
+    loadMoreBtn.addEventListener('click', async () => {
+      currentPage++;
+      showLoader(true);
+      try {
+        const more = await fetchPosts(currentPage, currentCategorySlug);
+        if (more.length) {
+          accumulatedPosts = [...accumulatedPosts, ...more];
+          renderFeed(accumulatedPosts);
+        } else {
+          loadMoreBtn.style.display = 'none';
+          showToast('وصلت لنهاية هذا القسم');
+        }
+      } catch (e) {
+        showToast('خطأ أثناء تحميل المزيد');
+      } finally {
+        showLoader(false);
+      }
+    });
+
+    // تجميع المسلسلات في كرت واحد IPTV
+    function renderFeed(posts) {
       const seriesMap = new Map();
       const standaloneMovies = [];
 
@@ -893,7 +948,6 @@
         if (isSeries) {
           const sSlug = post.series_slug;
           if (!seriesMap.has(sSlug)) {
-            // استخراج اسم المسلسل النظيف
             let clean = post.title.split(/الحلقة/i)[0].trim();
             clean = clean.replace(/الموسم\s*[\u0621-\u064A0-9]+/i, '').trim();
             clean = clean.replace(/^(مشاهدة|تحميل|مسلسل|برنامج)\s+/gi, '').trim();
@@ -915,14 +969,14 @@
         }
       });
 
-      allGroupedItems = [...seriesMap.values(), ...standaloneMovies];
-      renderGrid(allGroupedItems);
+      const items = [...seriesMap.values(), ...standaloneMovies];
+      renderGrid(items);
     }
 
     function renderGrid(items) {
       contentGrid.innerHTML = '';
       if (!items.length) {
-        contentGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted);">لا توجد نتائج.</div>`;
+        contentGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:var(--text-muted); font-size:1.1rem;">لا توجد عناصر لعرضها.</div>`;
         return;
       }
 
@@ -933,8 +987,8 @@
 
         const isSeries = item.type === 'series';
         const badgeHTML = isSeries 
-          ? `<div class="card-badge series">مسلسل IPTV</div>`
-          : `<div class="card-badge">فيلم</div>`;
+          ? `<div class="card-badge series">مسلسل كامل</div>`
+          : `<div class="card-badge">فيلم / عرض</div>`;
 
         card.innerHTML = `
           <div class="card-thumb">
@@ -944,7 +998,7 @@
           <div class="card-body">
             <div class="card-title">${item.title}</div>
             <div class="card-meta">
-              <span>${isSeries ? 'انقر لعرض المواسم والحلقات' : 'مشاهدة مباشرة'}</span>
+              <span>${isSeries ? 'المواسم والحلقات بالترتيب' : 'مشاهدة مباشرة'}</span>
             </div>
           </div>
         `;
@@ -958,16 +1012,15 @@
       });
     }
 
-    async function handleCardClick(item) {
+    function handleCardClick(item) {
       if (item.type === 'series') {
         openSeriesModal(item);
       } else {
         backToSeriesBtn.style.display = 'none';
-        playStream(item.realid, item.title, 'فيلم كامل');
+        playStream(item.realid, item.title, 'عرض كامل');
       }
     }
 
-    // فتح شاشة مواسم وحلقات المسلسل
     async function openSeriesModal(item) {
       iptvTitle.textContent = item.title;
       iptvPoster.src = item.image;
@@ -978,7 +1031,6 @@
       try {
         const res = await fetch(`${WORKER_BASE}?action=iptv_series_details&series_slug=${encodeURIComponent(item.series_slug)}`);
         const data = await res.json();
-        currentSeriesData = data;
         renderSeasonsAndEpisodes(data, item.title);
       } catch (err) {
         episodesGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:30px; color:#ff5252;">تعذر جلب تفاصيل المسلسل.</div>`;
@@ -990,7 +1042,7 @@
       const seasons = data.seasons || [];
 
       if (!seasons.length) {
-        episodesGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:20px; color:var(--text-muted);">لم يتم العثور على حلقات لهذا المسلسل.</div>`;
+        episodesGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:20px; color:var(--text-muted);">لا توجد حلقات مسجلة لهذا المسلسل.</div>`;
         return;
       }
 
@@ -1006,7 +1058,6 @@
         seasonsNav.appendChild(tab);
       });
 
-      // عرض حلقات الموسم الأول تلقائياً
       renderEpisodesList(seasons[0].episodes, seriesTitle, seasons[0].season_name);
     }
 
@@ -1042,15 +1093,92 @@
       });
     }
 
-    iptvCloseBtn.addEventListener('click', () => {
-      iptvModal.classList.remove('active');
+    iptvCloseBtn.addEventListener('click', () => iptvModal.classList.remove('active'));
+    backToSeriesBtn.addEventListener('click', () => iptvModal.classList.add('active'));
+
+    /* ========================================================
+       البحث الشامل + التعريب التلقائي
+       ======================================================== */
+    const nameMap = {
+      'ديكستر': 'Dexter',
+      'دكستر': 'Dexter',
+      'بريكنج باد': 'Breaking Bad',
+      'بريكينج باد': 'Breaking Bad',
+      'لعبة العروش': 'Game of Thrones',
+      'صراع العروش': 'Game of Thrones',
+      'فايكنج': 'Vikings',
+      'فايكنجز': 'Vikings',
+      'بيكي بلاندرز': 'Peaky Blinders',
+      'سترينجر ثينقز': 'Stranger Things',
+      'دارك': 'Dark',
+      'ذا بويز': 'The Boys',
+      'فريندز': 'Friends',
+      'بريزون بريك': 'Prison Break'
+    };
+
+    searchInput.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
+      clearTimeout(searchDebounce);
+
+      if (!val) {
+        sectionHeading.textContent = 'المحتوى المعروض';
+        loadInitialFeed(currentCategorySlug);
+        return;
+      }
+
+      searchDebounce = setTimeout(async () => {
+        showLoader(true);
+        loadMoreBtn.style.display = 'none';
+        sectionHeading.textContent = `نتائج البحث عن: "${val}"`;
+
+        try {
+          let query = val;
+          const lower = val.toLowerCase();
+          for (const [ar, en] of Object.entries(nameMap)) {
+            if (lower.includes(ar)) {
+              query = en;
+              break;
+            }
+          }
+
+          let res = await fetch(`${WORKER_BASE}?action=search&search=${encodeURIComponent(query)}`);
+          let data = await res.json();
+          let posts = Array.isArray(data) ? data : (data.posts || []);
+
+          if (!posts.length && query !== val) {
+            res = await fetch(`${WORKER_BASE}?action=search&search=${encodeURIComponent(val)}`);
+            data = await res.json();
+            posts = Array.isArray(data) ? data : (data.posts || []);
+          }
+
+          renderFeed(posts);
+        } catch (err) {
+          contentGrid.innerHTML = `<div style="grid-column: 1/-1; text-align:center; padding:40px; color:#ff5252;">خطأ أثناء البحث.</div>`;
+        } finally {
+          showLoader(false);
+        }
+      }, 500);
     });
 
-    backToSeriesBtn.addEventListener('click', () => {
-      iptvModal.classList.add('active');
+    /* ========================================================
+       التبديل بين الأقسام الـ 22 عند النقر
+       ======================================================== */
+    categoriesBar.addEventListener('click', (e) => {
+      const btn = e.target.closest('.cat-btn');
+      if (!btn) return;
+
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const slug = btn.getAttribute('data-slug');
+      sectionHeading.textContent = btn.textContent;
+      searchInput.value = '';
+      loadInitialFeed(slug);
     });
 
-    // جلب البث وتشغيل الفيديو
+    /* ========================================================
+       مشغل الفيديو والتحكم
+       ======================================================== */
     async function playStream(realid, mainTitle, subTitle) {
       playerTitle.textContent = mainTitle;
       playerSubtitle.textContent = subTitle;
@@ -1067,7 +1195,7 @@
         else if (Array.isArray(data) && data[0]?.url) streamUrl = data[0].url;
 
         if (!streamUrl) {
-          alert('تعذر استخراج رابط البث لهذه الحلقة حالياً.');
+          alert('تعذر استخراج رابط البث حالياً.');
           return;
         }
 
@@ -1092,7 +1220,6 @@
       showControls();
     }
 
-    // أزرار المشغل
     playPauseBtn.addEventListener('click', () => {
       if (video.paused) video.play();
       else video.pause();
@@ -1136,11 +1263,10 @@
       return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
     }
 
-    // زر قياس الفيديو بنقرة واحدة
     const aspectModes = [
       { fit: 'contain', label: 'تناسب 16:9', desc: 'المقاس الأصلي (تناسب)' },
-      { fit: 'cover',   label: 'ملء الشاشة', desc: 'ملء الشاشة مع قص الحواف (Cover)' },
-      { fit: 'fill',    label: 'تمدد كامل', desc: 'تمدد لكامل أبعاد الشاشة (Stretch)' }
+      { fit: 'cover',   label: 'ملء الشاشة', desc: 'ملء الشاشة مع قص الحواف' },
+      { fit: 'fill',    label: 'تمدد كامل', desc: 'تمدد لكامل أبعاد الشاشة' }
     ];
     let currentAspectIdx = 0;
 
@@ -1153,7 +1279,6 @@
       showToast(mode.desc);
     });
 
-    // ملء الشاشة والنقر المزدوج
     async function toggleFullscreenAndRotate() {
       try {
         if (!document.fullscreenElement) {
@@ -1206,15 +1331,11 @@
 
     playerContainer.addEventListener('mousemove', showControls);
 
-    searchInput.addEventListener('input', (e) => {
-      const q = e.target.value.trim().toLowerCase();
-      if (!q) { renderGrid(allGroupedItems); return; }
-      renderGrid(allGroupedItems.filter(item => item.title.toLowerCase().includes(q)));
-    });
-
     function showLoader(visible) { loader.style.display = visible ? 'flex' : 'none'; }
 
-    loadFeed();
+    // تشغيل الصفحة وتحميل الأقسام + المنشورات معاً
+    loadCategories();
+    loadInitialFeed();
   </script>
 </body>
 </html>
