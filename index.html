@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Alameeere Movies</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- شاشة البداية (Splash Screen) -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-glow"></div>
+        <div class="splash-title">
+            <h1>AlameeereTv</h1>
+            <h2>Movies</h2>
+        </div>
+        <div class="splash-hint">اضغط OK أو المس الشاشة للدخول</div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
+    <div id="main-app" class="hidden">
+        <header class="main-header">
+            <div class="logo" tabindex="0">
+                <h1>Alameeere</h1>
+                <h2>Movies</h2>
+            </div>
+            <div class="search-container">
+                <input type="text" id="search-input" placeholder="ابحث عن فيلم أو مسلسل..." tabindex="0">
+                <button id="search-btn" tabindex="0">بحث</button>
+            </div>
+        </header>
+
+        <main class="content-area">
+            <h3 class="section-title" id="main-section-title">أحدث الإضافات</h3>
+            <div id="movies-grid" class="movies-grid">
+                <!-- سيتم تعبئة البطاقات هنا عبر JS -->
+            </div>
+            <div id="loading" class="loading">جاري التحميل...</div>
+        </main>
+    </div>
+
+    <script src="js/spatial-nav.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
