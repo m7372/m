@@ -1,0 +1,24 @@
+{
+  "name": "Alameeere Movies",
+  "short_name": "Alameeere",
+  "description": "أفلام ومسلسلات — Alameeere Movies",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "categories": ["entertainment", "video"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "المفضلة", "short_name": "المفضلة", "url": "./?fav=1", "icons": [{ "src": "icons/icon-96.png", "sizes": "96x96", "type": "image/png" }] }
+  ]
+}
