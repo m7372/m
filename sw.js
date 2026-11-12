@@ -1,7 +1,7 @@
 /* Alameeere Movies — service worker
    - صفحة التطبيق والأيقونات: تُخزَّن للعمل السريع/دون اتصال
    - الـ API والفيديو (m3u8/ts) والبوسترات: لا تُخزَّن أبداً */
-const VER = 'alm-v1';
+const VER = 'alm-v2';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/logo.png', './icons/favicon-48.png', './icons/apple-touch-icon.png'];
 const LIB_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net'];
 
