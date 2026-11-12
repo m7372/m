@@ -16,37 +16,48 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://mo.m737217130.workers.dev" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&display=swap&text=Alameeere%20Movies" rel="stylesheet">
-  <script defer src="https://cdn.jsdelivr.net/npm/hls.js@1.5/dist/hls.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&display=swap&text=Alameeere%20Movies" rel="stylesheet" media="print" onload="this.media='all'">
+  <script>
+    /* flex-gap detection (Chrome < 84) */
+    (function () { try {
+      var d = document.createElement('div'); d.style.cssText = 'display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden';
+      d.appendChild(document.createElement('i')); d.appendChild(document.createElement('i'));
+      document.documentElement.appendChild(d);
+      var ok = d.scrollHeight === 1; document.documentElement.removeChild(d);
+      if (!ok) document.documentElement.className += ' no-fg';
+    } catch (e) {} })();
+  </script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Cairo', sans-serif; outline: none; }
     body { background: #0f1015; color: #fff; min-height: 100vh; padding-bottom: 50px; overflow-x: hidden; }
 
     /* Splash */
-    .splash-screen { position: fixed; inset: 0; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; cursor: pointer; transition: opacity 0.6s; }
+    .splash-screen { position: fixed; top: 0; right: 0; bottom: 0; left: 0; background: #000; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 99999; cursor: pointer; transition: opacity 0.6s; }
     .splash-title h1 { font-size: 3.5rem; font-weight: 900; text-shadow: 0 0 25px rgba(255,255,255,0.25); }
     .splash-title h2 { font-size: 1.75rem; font-weight: 400; letter-spacing: 6px; color: #aaa; margin-top: -10px; }
     .splash-hint { position: absolute; bottom: 10%; font-size: 1.2rem; color: #888; animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
 
     /* Header */
-    header { background: #181920; padding: 15px 25px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+    header { background: #181920; padding: 15px 25px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 15px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.5); } html.no-fg /* Header */
+    header > * { margin: 7.5px 7.5px; }
     .logo h1 { font-size: 24px; font-weight: 900; }
     .logo h2 { font-size: 12px; color: #888; letter-spacing: 3px; margin-top: 2px; }
-    .search-box { display: flex; gap: 8px; flex: 1; max-width: 400px; }
+    .search-box { display: flex; gap: 8px; flex: 1; max-width: 400px; } html.no-fg .search-box > * { margin: 4px 4px; }
     .search-box input { width: 100%; padding: 10px 14px; border-radius: 6px; border: 1px solid #333; background: #232530; color: #fff; }
     .search-box button { padding: 10px 18px; background: #e50914; color: #fff; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
 
     /* Categories */
-    .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px 25px; background: #13141a; scrollbar-width: none; }
+    .categories { display: flex; gap: 10px; overflow-x: auto; padding: 15px 25px; background: #13141a; scrollbar-width: none; } html.no-fg /* Categories */
+    .categories > * { margin: 5px 5px; }
     .categories::-webkit-scrollbar { display: none; }
     .cat-btn { background: #232530; color: #ddd; border: 1px solid #333; padding: 8px 16px; border-radius: 20px; cursor: pointer; white-space: nowrap; transition: 0.2s; font-size: 0.95rem; }
     .cat-btn.active, .cat-btn:hover { background: #e50914; border-color: #e50914; color: #fff; }
 
     /* Grid */
     .container { max-width: 1400px; margin: 20px auto; padding: 0 20px; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px; grid-gap:  20px; }
     .card { background: #181920; border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; }
     .card:hover { transform: translateY(-6px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); }
     .poster-wrap { position: relative; width: 100%; padding-top: 145%; background: #232530; }
@@ -62,37 +73,38 @@
 
     /* More button */
     .more-wrap { display: none; justify-content: center; margin-top: 30px; }
-    .more-btn { display: flex; align-items: center; gap: 10px; padding: 12px 34px; background: #e50914; color: #fff; border: none; border-radius: 30px; font-weight: 700; font-size: 1rem; cursor: pointer; }
+    .more-btn { display: flex; align-items: center; gap: 10px; padding: 12px 34px; background: #e50914; color: #fff; border: none; border-radius: 30px; font-weight: 700; font-size: 1rem; cursor: pointer; } html.no-fg .more-btn > * { margin: 5px 5px; }
     .more-btn .ico { font-size: 1.2rem; }
     .more-btn:disabled { opacity: 0.6; cursor: wait; }
 
     /* Pagination */
-    .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 35px; align-items: center; }
+    .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 35px; align-items: center; } html.no-fg /* Pagination */
+    .pagination > * { margin: 7.5px 7.5px; }
     .pagination button { padding: 10px 20px; background: #232530; color: #fff; border: 1px solid #444; border-radius: 6px; cursor: pointer; }
     .pagination button:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* ===== Series Modal ===== */
-    .series-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.8); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); z-index: 998; justify-content: center; align-items: center; padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom)); }
+    .series-modal { display: none; position: fixed; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0,0,0,.8); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); z-index: 998; justify-content: center; align-items: center; padding: 14px 14px 14px; padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom)); }
     .series-modal.show { display: flex; animation: smFade .2s; }
     @keyframes smFade { from { opacity: 0; } to { opacity: 1; } }
     @keyframes smPop { from { opacity: 0; transform: translateY(16px) scale(.98); } to { opacity: 1; transform: none; } }
-    .series-content { position: relative; width: 100%; max-width: 760px; max-height: min(92vh, 880px); display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; background: #0b0c11; border: 1px solid rgba(255,255,255,.09); box-shadow: 0 30px 80px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.1); animation: smPop .26s cubic-bezier(.2,.8,.2,1); }
+    .series-content { position: relative; width: 100%; max-width: 760px; max-height: 92vh; max-height: min(92vh, 880px); display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; background: #0b0c11; border: 1px solid rgba(255,255,255,.09); box-shadow: 0 30px 80px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.1); animation: smPop .26s cubic-bezier(.2,.8,.2,1); }
     .sm-close { position: absolute; top: 12px; left: 12px; z-index: 5; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,.16); background: rgba(0,0,0,.55); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
     .sm-close svg { width: 15px; height: 15px; }
-    .sm-hero { position: relative; flex: none; display: flex; gap: 16px; align-items: flex-end; padding: 26px 20px 14px; overflow: hidden; }
-    .sm-bg { position: absolute; inset: -24px; background-size: cover; background-position: center; filter: blur(26px) saturate(1.3) brightness(.45); transform: scale(1.15); }
-    .sm-hero::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(11,12,17,.2), #0b0c11 97%); }
+    .sm-hero { position: relative; flex: none; display: flex; gap: 16px; align-items: flex-end; padding: 26px 20px 14px; overflow: hidden; } html.no-fg .sm-hero > * { margin: 8px 8px; }
+    .sm-bg { position: absolute; top: -24px; right: -24px; bottom: -24px; left: -24px; background-size: cover; background-position: center; filter: blur(26px) saturate(1.3) brightness(.45); transform: scale(1.15); }
+    .sm-hero::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: linear-gradient(180deg, rgba(11,12,17,.2), #0b0c11 97%); }
     .sm-hero > * { position: relative; z-index: 1; }
-    .sm-poster { width: 92px; aspect-ratio: 2 / 3; border-radius: 10px; object-fit: cover; flex: none; background: #16171e; border: 1px solid rgba(255,255,255,.16); box-shadow: 0 10px 28px rgba(0,0,0,.7); }
+    .sm-poster { width: 92px; height: 138px; border-radius: 10px; object-fit: cover; flex: none; background: #16171e; border: 1px solid rgba(255,255,255,.16); box-shadow: 0 10px 28px rgba(0,0,0,.7); }
     .sm-info { min-width: 0; flex: 1; }
     .sm-title { font-size: 1.15rem; line-height: 1.4; font-weight: 700; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; padding-left: 30px; }
-    .sm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .sm-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; } html.no-fg .sm-chips > * { margin: 3px 3px; }
     .sm-chip { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.13); color: #e8eaf2; padding: 1px 10px; border-radius: 20px; font-size: .72rem; font-weight: 700; line-height: 1.7; }
     .sm-chip:empty { display: none; }
     .sm-chip.red { background: rgba(229,9,20,.92); border-color: #ff4a55; color: #fff; }
     .sm-story { font-size: .78rem; line-height: 1.65; color: #aeb3c4; max-height: 3.3em; overflow: hidden; }
-    .sm-actions { flex: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 20px 14px; }
-    .sm-btn { height: 36px; padding: 0 15px; display: inline-flex; align-items: center; gap: 7px; border-radius: 18px; border: 1px solid rgba(255,255,255,.12); background: linear-gradient(180deg, #23242e, #101118); color: #fff; font-weight: 700; font-size: .82rem; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.1); }
+    .sm-actions { flex: none; display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 20px 14px; } html.no-fg .sm-actions > * { margin: 4px 4px; }
+    .sm-btn { height: 36px; padding: 0 15px; display: inline-flex; align-items: center; gap: 7px; border-radius: 18px; border: 1px solid rgba(255,255,255,.12); background: linear-gradient(180deg, #23242e, #101118); color: #fff; font-weight: 700; font-size: .82rem; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.1); } html.no-fg .sm-btn > * { margin: 3.5px 3.5px; }
     .sm-btn svg { width: 16px; height: 16px; }
     .sm-btn:disabled { opacity: .6; cursor: wait; }
     .sm-btn.primary { background: linear-gradient(180deg, #ff3a46, #c1000c); border-color: #ff4a55; box-shadow: 0 4px 14px rgba(229,9,20,.4), inset 0 1px 0 rgba(255,255,255,.3); }
@@ -101,7 +113,7 @@
     .sm-btn.spin i { animation: plspin .9s linear infinite; }
     .sm-btn:focus { transform: none; }
     .sm-body { flex: 1; min-height: 0; display: flex; flex-direction: column; padding: 0 20px 18px; }
-    .season-tabs { flex: none; display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; }
+    .season-tabs { flex: none; display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px; scrollbar-width: none; } html.no-fg .season-tabs > * { margin: 3px 3px; }
     .season-tabs::-webkit-scrollbar { display: none; }
     .season-tab { padding: 5px 13px; font-size: .78rem; font-weight: 700; border-radius: 16px; background: #171821; border: 1px solid rgba(255,255,255,.09); color: #c9ccd8; cursor: pointer; white-space: nowrap; }
     .season-tab small { opacity: .65; font-weight: 400; margin-inline-start: 5px; }
@@ -110,7 +122,7 @@
     .sm-status.show { display: flex; }
     .sm-status.warn { color: #ffb86b; }
     .sm-status .dot { width: 12px; height: 12px; flex: none; border-radius: 50%; border: 2px solid rgba(255,255,255,.25); border-top-color: #fff; animation: plspin .8s linear infinite; }
-    .episodes-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 8px; align-content: start; overflow-y: auto; overscroll-behavior: contain; padding: 3px; }
+    .episodes-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); gap: 8px; grid-gap:  8px; align-content: start; overflow-y: auto; overscroll-behavior: contain; padding: 3px; }
     .episode-btn { position: relative; height: 50px; padding: 0; border-radius: 11px; border: 1px solid rgba(255,255,255,.09); background: linear-gradient(180deg, #1c1d26, #0e0f15); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.15; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.08); }
     .episode-btn b { font-size: .98rem; font-weight: 700; }
     .episode-btn i { font-style: normal; font-size: .58rem; color: #8b90a0; }
@@ -129,7 +141,7 @@
       .series-modal { padding: 0; align-items: flex-end; }
       .series-content { max-width: none; max-height: 94vh; border-radius: 20px 20px 0 0; }
       .sm-hero { padding: 24px 16px 12px; gap: 12px; }
-      .sm-poster { width: 78px; }
+      .sm-poster { width: 78px; height: 117px; }
       .sm-actions { padding: 2px 16px 12px; gap: 6px; flex-wrap: nowrap; }
       .sm-btn { height: 34px; padding: 0 11px; gap: 5px; font-size: .76rem; white-space: nowrap; flex: 0 1 auto; }
       .sm-btn svg { width: 15px; height: 15px; }
@@ -139,23 +151,23 @@
     }
 
     /* ===== Player ===== */
-    .pl { display: none; position: fixed; inset: 0; background: #000; z-index: 999; direction: ltr; overscroll-behavior: contain; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+    .pl { display: none; position: fixed; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; background: #000; z-index: 999; direction: ltr; overscroll-behavior: contain; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
     .pl.show { display: block; }
-    .pl-stage { position: absolute; inset: 0; background: #000; overflow: hidden; }
-    .pl-stage video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; transition: transform .25s; }
-    .pl-gesture { position: absolute; inset: 0; z-index: 1; touch-action: none; -webkit-touch-callout: none; }
+    .pl-stage { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: #000; overflow: hidden; }
+    .pl-stage video { position: absolute; top: 0; right: 0; bottom: 0; left: 0; width: 100%; height: 100%; object-fit: contain; background: #000; transition: transform .25s; }
+    .pl-gesture { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 1; touch-action: none; -webkit-touch-callout: none; }
     i.ic { display: flex; font-style: normal; }
 
     .pl-top, .pl-bottom, .pl-mid { position: absolute; z-index: 3; pointer-events: none; opacity: 0; transition: opacity .25s, transform .25s; }
     .pl.ui-on .pl-top, .pl.ui-on .pl-bottom, .pl.ui-on .pl-mid { opacity: 1; transform: none; }
     .pl.ui-on .pl-btn, .pl.ui-on .pl-seek { pointer-events: auto; }
     .pl-top { top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 4px; transform: translateY(-8px);
-      padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 30px max(16px, env(safe-area-inset-left));
-      background: linear-gradient(to bottom, rgba(0,0,0,.75), transparent); }
+      padding: 12px 16px 30px 16px; padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 30px max(16px, env(safe-area-inset-left));
+      background: linear-gradient(to bottom, rgba(0,0,0,.75), transparent); } html.no-fg .pl-top > * { margin: 2px 2px; }
     .pl-bottom { bottom: 0; left: 0; right: 0; transform: translateY(8px);
-      padding: 36px max(16px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+      padding: 36px 16px 10px 16px; padding: 36px max(16px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
       background: linear-gradient(to top, rgba(0,0,0,.85), transparent); }
-    .pl-mid { top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: clamp(18px, 7vw, 48px); }
+    .pl-mid { top: 50%; left: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: 18px; gap: clamp(18px, 7vw, 48px); } html.no-fg .pl-mid > * { margin: 9px 9px; }
     .pl.ui-on .pl-mid { transform: translate(-50%, -50%); }
 
     .pl-btn { width: 44px; height: 44px; border-radius: 50%; border: none; background: transparent; color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; position: relative; transition: background .15s, transform .15s; }
@@ -176,39 +188,39 @@
     .pl.loading .pl-loader { display: block; }
     @keyframes plspin { to { transform: rotate(360deg); } }
 
-    .pl-seekrow { display: flex; align-items: center; gap: 10px; color: #ddd; font-size: 12px; font-variant-numeric: tabular-nums; }
+    .pl-seekrow { display: flex; align-items: center; gap: 10px; color: #ddd; font-size: 12px; font-variant-numeric: tabular-nums; } html.no-fg .pl-seekrow > * { margin: 5px 5px; }
     .pl-seekrow .pl-btn { width: 38px; height: 38px; }
     .pl-seekrow .pl-btn svg { width: 22px; height: 22px; }
     .pl-seek { flex: 1; height: 30px; position: relative; cursor: pointer; touch-action: none; display: flex; align-items: center; }
     .pl-track { position: absolute; left: 0; right: 0; height: 4px; border-radius: 4px; background: rgba(255,255,255,.22); overflow: hidden; transition: height .15s; }
     .pl-seek:hover .pl-track, .pl-seek.drag .pl-track { height: 6px; }
-    .pl-buf, .pl-played { position: absolute; inset: 0; transform-origin: left; transform: scaleX(0); }
+    .pl-buf, .pl-played { position: absolute; top: 0; right: 0; bottom: 0; left: 0; transform-origin: left; transform: scaleX(0); }
     .pl-buf { background: rgba(255,255,255,.35); }
     .pl-played { background: linear-gradient(90deg, #ff4d58, #e50914); }
     .pl-thumb { position: absolute; top: 50%; left: 0; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: #fff; box-shadow: 0 0 0 4px rgba(229,9,20,.35); transition: transform .15s; }
     .pl-seek.drag .pl-thumb { transform: scale(1.3); }
 
-    .pl-hud { position: absolute; top: 50%; z-index: 4; width: 46px; padding: 12px 0; margin-top: -84px; border-radius: 24px; background: rgba(20,20,26,.78); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: opacity .2s; }
+    .pl-hud { position: absolute; top: 50%; z-index: 4; width: 46px; padding: 12px 0; margin-top: -84px; border-radius: 24px; background: rgba(20,20,26,.78); display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0; pointer-events: none; transition: opacity .2s; } html.no-fg .pl-hud > * { margin: 5px 5px; }
     .pl-hud.show { opacity: 1; }
-    .pl-hud.left { left: max(6%, env(safe-area-inset-left)); }
-    .pl-hud.right { right: max(6%, env(safe-area-inset-right)); }
+    .pl-hud.left { left: 6%; left: max(6%, env(safe-area-inset-left)); }
+    .pl-hud.right { right: 6%; right: max(6%, env(safe-area-inset-right)); }
     .pl-hud svg { width: 22px; height: 22px; color: #fff; }
     .pl-hud-bar { width: 6px; height: 110px; border-radius: 6px; background: rgba(255,255,255,.22); overflow: hidden; position: relative; }
-    .pl-hud-fill { position: absolute; inset: 0; background: #fff; transform-origin: bottom; transform: scaleY(.5); }
+    .pl-hud-fill { position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: #fff; transform-origin: bottom; transform: scaleY(.5); }
 
-    .pl-toast { position: absolute; top: max(72px, calc(env(safe-area-inset-top) + 60px)); left: 50%; transform: translate(-50%, -6px); z-index: 5; background: rgba(20,20,26,.88); color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; white-space: nowrap; }
+    .pl-toast { position: absolute; top: 72px; top: max(72px, calc(env(safe-area-inset-top) + 60px)); left: 50%; transform: translate(-50%, -6px); z-index: 5; background: rgba(20,20,26,.88); color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 8px; opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; white-space: nowrap; } html.no-fg .pl-toast > * { margin: 4px 4px; }
     .pl-toast.show { opacity: 1; transform: translate(-50%, 0); }
     .pl-toast svg { width: 22px; height: 22px; }
 
-    .pl-panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(330px, 82vw); z-index: 6; background: rgba(10,10,14,.97); display: flex; flex-direction: column;
-      padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) 12px;
+    .pl-panel { position: absolute; top: 0; right: 0; bottom: 0; width: 330px; width: min(330px, 82vw); z-index: 6; background: rgba(10,10,14,.97); display: flex; flex-direction: column;
+      padding: 12px 12px 12px 12px; padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) 12px;
       box-shadow: -10px 0 30px rgba(0,0,0,.6); transform: translateX(100%); visibility: hidden; transition: transform .28s cubic-bezier(.2,.8,.2,1), visibility 0s .28s; }
     .pl-panel.open { transform: none; visibility: visible; transition: transform .28s cubic-bezier(.2,.8,.2,1); }
-    .pl-ph { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .pl-chips { flex: 1; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+    .pl-ph { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; } html.no-fg .pl-ph > * { margin: 4px 4px; }
+    .pl-chips { flex: 1; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; } html.no-fg .pl-chips > * { margin: 4px 4px; }
     .pl-chip { min-width: 38px; height: 38px; padding: 0 10px; border-radius: 10px; border: 1px solid #333; background: #1b1c24; color: #ddd; font-weight: 700; cursor: pointer; flex: none; }
     .pl-chip.on { background: #e50914; border-color: #e50914; color: #fff; }
-    .pl-eps { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; overflow-y: auto; overscroll-behavior: contain; align-content: start; padding: 3px; }
+    .pl-eps { flex: 1; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; grid-gap:  8px; overflow-y: auto; overscroll-behavior: contain; align-content: start; padding: 3px; }
     .pl-ep { height: 46px; border-radius: 10px; border: none; background: rgba(255,255,255,.08); color: #fff; font-weight: 700; font-size: 14px; cursor: pointer; }
     .pl-ep:hover { background: rgba(255,255,255,.18); }
     .pl-ep.cur, .pl-ep.cur:hover { background: #e50914; }
@@ -225,7 +237,7 @@
   
     /* ===== Glossy black theme + brand ===== */
     body { background: #020204; }
-    body::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    body::before { content: ''; position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: -1; pointer-events: none;
       background: radial-gradient(110% 55% at 50% -8%, rgba(255,255,255,.075), transparent 60%),
                   radial-gradient(55% 35% at 92% 2%, rgba(229,9,20,.12), transparent 65%),
                   linear-gradient(180deg, #0b0c11 0%, #030305 45%, #000 100%); }
@@ -249,8 +261,8 @@
     .search-box button { height: 34px; width: 38px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: 18px; flex: none; background: linear-gradient(180deg, #ff3a46, #c1000c); box-shadow: inset 0 1px 0 rgba(255,255,255,.35); }
 
     .splash-title { text-align: center; }
-    .splash-title .brand { font-size: clamp(40px, 12vw, 76px); justify-content: center; letter-spacing: 3px; filter: drop-shadow(0 0 16px rgba(255,214,140,.3)); }
-    .splash-title h2 { font-family: 'Cinzel Decorative', 'Cairo', serif; font-weight: 700; font-size: clamp(12px, 3.4vw, 20px); letter-spacing: 12px; color: #8e95aa; margin: -2px 0 0; padding-left: 12px; }
+    .splash-title .brand { font-size: 40px; font-size: clamp(40px, 12vw, 76px); justify-content: center; letter-spacing: 3px; filter: drop-shadow(0 0 16px rgba(255,214,140,.3)); }
+    .splash-title h2 { font-family: 'Cinzel Decorative', 'Cairo', serif; font-weight: 700; font-size: 12px; font-size: clamp(12px, 3.4vw, 20px); letter-spacing: 12px; color: #8e95aa; margin: -2px 0 0; padding-left: 12px; }
 
     .categories { background: transparent; padding: 8px 12px; gap: 8px; }
     .cat-btn { padding: 6px 14px; font-size: .9rem; color: #d9dbe4; background: linear-gradient(180deg, #22232d, #0f1016); border: 1px solid rgba(255,255,255,.09); box-shadow: inset 0 1px 0 rgba(255,255,255,.1); }
@@ -259,7 +271,7 @@
     .container { margin: 12px auto; }
     .card { background: linear-gradient(165deg, #171821, #08090d); border: 1px solid rgba(255,255,255,.07); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 4px 12px rgba(0,0,0,.55); }
     .poster-wrap { background: #101117; }
-    .poster-wrap::after { content: ''; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(118deg, rgba(255,255,255,.17) 0%, rgba(255,255,255,.04) 28%, transparent 42%); }
+    .poster-wrap::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; left: 0; pointer-events: none; background: linear-gradient(118deg, rgba(255,255,255,.17) 0%, rgba(255,255,255,.04) 28%, transparent 42%); }
     .card h3 { color: #f1f2f6; }
     @media (hover: hover) { .card:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.14), inset 0 1px 0 rgba(255,255,255,.18); } }
 
@@ -268,13 +280,13 @@
     @media (max-width: 768px) { .logo h1.brand { font-size: 19px; } header { padding: 5px 8px; } .search-box { max-width: none; } }
     @media (prefers-reduced-motion: reduce) { .brand span { animation: none; } }
     /* ===== PWA / share / misc ===== */
-    .splash-logo { display: block; width: min(64vw, 300px); height: auto; margin: 0 auto; filter: drop-shadow(0 0 26px rgba(255,255,255,.16)); animation: logoIn .9s ease both; }
+    .splash-logo { display: block; width: 300px; width: min(64vw, 300px); height: auto; margin: 0 auto; filter: drop-shadow(0 0 26px rgba(255,255,255,.16)); animation: logoIn .9s ease both; }
     @keyframes logoIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
     .logo-ico { height: 38px; width: auto; flex: none; display: block; }
     .install-btn { flex: none; height: 34px; padding: 0 12px; display: none; align-items: center; gap: 6px; border-radius: 18px; border: 1px solid rgba(255,255,255,.14); background: linear-gradient(180deg, #23242e, #101118); color: #fff; font-weight: 700; font-size: .8rem; cursor: pointer; white-space: nowrap; }
     .install-btn svg { width: 15px; height: 15px; }
     @media (max-width: 480px) { .install-btn span { display: none; } .install-btn { width: 34px; padding: 0; justify-content: center; } }
-    .ios-hint { position: fixed; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 90; display: none; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(22,23,31,.96); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 30px rgba(0,0,0,.7); font-size: .82rem; line-height: 1.6; }
+    .ios-hint { position: fixed; left: 12px; right: 12px; bottom: 12px; bottom: max(12px, env(safe-area-inset-bottom)); z-index: 90; display: none; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: rgba(22,23,31,.96); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 10px 30px rgba(0,0,0,.7); font-size: .82rem; line-height: 1.6; }
     .ios-hint.show { display: flex; }
     .ios-hint button { flex: none; width: 28px; height: 28px; border-radius: 50%; border: none; background: rgba(255,255,255,.12); color: #fff; cursor: pointer; }
     .pl-top .pl-btn { width: 40px; height: 40px; }
@@ -282,12 +294,60 @@
     .pl-btn.favon svg { fill: currentColor; }
     .pl-share { direction: rtl; }
     .pl-sh-title { flex: 1; font-weight: 700; font-size: 14px; padding: 0 4px; }
-    .pl-opts { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; overscroll-behavior: contain; align-content: start; padding: 3px; }
-    .pl-opt { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 14px; border-radius: 12px; border: none; background: rgba(255,255,255,.08); color: #fff; font-weight: 700; font-size: 13.5px; line-height: 1.45; text-align: start; cursor: pointer; }
+    .pl-opts { flex: 1; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; overscroll-behavior: contain; align-content: start; padding: 3px; } html.no-fg .pl-opts > * { margin: 4px 4px; }
+    .pl-opt { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 8px 14px; border-radius: 12px; border: none; background: rgba(255,255,255,.08); color: #fff; font-weight: 700; font-size: 13.5px; line-height: 1.45; text-align: start; cursor: pointer; } html.no-fg .pl-opt > * { margin: 6px 6px; }
     .pl-opt:hover { background: rgba(255,255,255,.16); }
     .pl-opt .ic svg { width: 22px; height: 22px; }
     .pl-opt:focus { outline: 2px solid #fff !important; outline-offset: 2px; transform: none; box-shadow: none; }
     .pl-note { flex: none; margin-top: 10px; font-size: 11.5px; line-height: 1.7; color: #8b90a0; }
+    /* ===== Lite: خفيف على الأجهزة والشاشات القديمة ===== */
+    * { box-shadow: none !important; text-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+    body::before { display: none; }
+    body { background: #05060a; }
+    header { background: #0b0c11; }
+    .brand, .splash-title .brand, .splash-logo { filter: none !important; }
+    .brand span { animation: none !important; background-size: 100% 100%; background-position: 50% 0; }
+    .splash-hint, .splash-logo, .series-modal.show, .series-content { animation: none !important; }
+    .sm-bg { filter: none; transform: none; top: 0; right: 0; bottom: 0; left: 0; opacity: .22; }
+    .sm-hero::after { background: linear-gradient(180deg, rgba(11,12,17,0), #0b0c11 97%); }
+    .series-modal { background: rgba(0,0,0,.9); }
+    .card { background: #12131a; transition: none; }
+    .poster-wrap::after { display: none; }
+    @media (hover: hover) { .card:hover { transform: none; border-color: rgba(255,255,255,.35); } }
+    .cat-btn, .sm-btn, .more-btn, .install-btn, .search-box button { background-image: none; }
+    .cat-btn { background-color: #1a1b24; }
+    .cat-btn.active, .cat-btn:hover { background-color: #e50914; }
+    .sm-btn { background-color: #1d1e27; }
+    .sm-btn.primary, .more-btn, .search-box button, .season-tab.active { background-color: #e50914; }
+    .season-tab.active { background-image: none; }
+    .episode-btn { background-image: none; background-color: #171821; }
+    .episode-btn:hover, .episode-btn:focus { background-color: #262734; }
+    .episode-btn.miss { background-color: transparent; }
+    /* التركيز بالريموت: إطار واضح بدون توهج ولا تكبير ثقيل */
+    [tabindex="0"]:focus, .card:focus, .cat-btn:focus, button:focus { outline: 3px solid #fff !important; outline-offset: 2px; transform: none; z-index: 10; }
+    .card:focus { transform: scale(1.03); outline-color: #e50914 !important; }
+    .episode-btn:focus, .season-tab:focus, .sm-btn:focus, .pl-btn:focus { transform: none !important; }
+    .episode-btn.next { outline: 2px solid #e50914; outline-offset: -2px; }
+    /* قلب البطاقة: نص بدل SVG (أخف بكثير) */
+    .fav-btn { font-size: 16px; line-height: 1; color: rgba(255,255,255,.7); background: rgba(0,0,0,.6); -webkit-backdrop-filter: none; backdrop-filter: none; }
+    .fav-btn.on { color: #ff3a46; }
+    /* لوحة الحلقات: صلبة وبدون شفافية */
+    .pl-panel { background: #0b0b10; width: 330px; max-width: 82vw; transform: translateX(28px); opacity: 0; transition: opacity .15s, transform .15s, visibility 0s .15s; }
+    .pl-panel.open { transform: none; opacity: 1; transition: opacity .15s, transform .15s; }
+    .pl-toast { background: #14141a; }
+    html.no-fg .pl-chips > * + *, html.no-fg .pl-ph > * + * { margin-left: 8px; }
+    .pl-ep:focus, .pl-chip:focus, .pl-opt:focus { outline: 3px solid #fff !important; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  
+    @supports not (display: grid) {
+      .grid { display: flex; flex-wrap: wrap; margin: -4px; }
+      .grid > * { width: 25%; padding: 4px; }
+      .grid > p.muted { width: 100%; }
+      .episodes-grid, .pl-eps { display: flex; flex-wrap: wrap; align-content: flex-start; }
+      .episodes-grid > * { width: 16.66%; margin: 3px 0; }
+      .pl-eps > * { width: 25%; margin: 0; }
+    }
+    @media (max-width: 768px) { @supports not (display: grid) { .grid > * { width: 33.33%; } .episodes-grid > * { width: 20%; } } }
   </style>
 </head>
 <body>
@@ -418,915 +478,1103 @@
   </div>
 
   <script>
-    const API = 'https://mo.m737217130.workers.dev/';
-    let currentPage = 1;
-    let currentCategory = '';
-    let currentSearch = '';
-    let hls = null;
-    let hideControlsTimer;
-
-    // حالة القائمة (تراكمية: المزيد يضيف ولا يمسح)
-    const shownKeys = new Set();
-    const seenPostIds = new Set();
-    const seriesMap = new Map();   // series_slug -> المسلسل (يحتفظ بحلقاته)
-    let hasMore = true;
-    let loadingMore = false;
-    let listToken = 0;
-
-    // حالة نافذة المسلسل
-    let activeSeries = null;
-    let activeSeasonName = null;
-
-    // طابور حساب عدد الحلقات في الخلفية
-    const pending = [];
-    let workers = 0;
-    const MAX_WORKERS = 2;
-
-    const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
-
-    // ===== Splash =====
-    const splash = document.getElementById('splash-screen');
-    const mainApp = document.getElementById('main-app');
-
-    function enterSite() {
-      splash.style.opacity = '0';
-      setTimeout(() => {
+(function () {
+  var S = String.prototype, A = Array.prototype, O = Object;
+  if (!S.padStart) S.padStart = function (n, c) { var s = String(this); c = c === undefined ? ' ' : String(c); while (s.length < n) s = c + s; return s; };
+  if (!S.padEnd) S.padEnd = function (n, c) { var s = String(this); c = c === undefined ? ' ' : String(c); while (s.length < n) s += c; return s; };
+  if (!O.entries) O.entries = function (o) { return Object.keys(o).map(function (k) { return [k, o[k]]; }); };
+  if (!O.values) O.values = function (o) { return Object.keys(o).map(function (k) { return o[k]; }); };
+  if (!O.assign) O.assign = function (t) { for (var i = 1; i < arguments.length; i++) { var s = arguments[i]; for (var k in s) if (Object.prototype.hasOwnProperty.call(s, k)) t[k] = s[k]; } return t; };
+  if (!A.includes) A.includes = function (v) { return this.indexOf(v) !== -1; };
+  if (window.NodeList && !NodeList.prototype.forEach) NodeList.prototype.forEach = A.forEach;
+  var E = window.Element && Element.prototype;
+  if (E && !E.matches) E.matches = E.webkitMatchesSelector || E.msMatchesSelector;
+  if (E && !E.closest) E.closest = function (s) { var n = this; while (n && n.nodeType === 1) { if (n.matches(s)) return n; n = n.parentNode; } return null; };
+  if (window.Promise && !Promise.prototype.finally) Promise.prototype.finally = function (f) { var P = this.constructor; return this.then(function (v) { return P.resolve(f()).then(function () { return v; }); }, function (e) { return P.resolve(f()).then(function () { throw e; }); }); };
+  if (!window.AbortController) window.AbortController = function () { this.signal = { aborted: false }; this.abort = function () { this.signal.aborted = true; }; };
+  if (!window.requestAnimationFrame) window.requestAnimationFrame = function (f) { return setTimeout(f, 16); };
+})();
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const API = 'https://mo.m737217130.workers.dev/';
+let currentPage = 1;
+let currentCategory = '';
+let currentSearch = '';
+let hls = null;
+let hideControlsTimer;
+const shownKeys = new Set();
+const seenPostIds = new Set();
+const seriesMap = new Map();
+let hasMore = true;
+let loadingMore = false;
+let listToken = 0;
+let activeSeries = null;
+let activeSeasonName = null;
+const pending = [];
+let workers = 0;
+const MAX_WORKERS = 2;
+const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+const splash = document.getElementById('splash-screen');
+const mainApp = document.getElementById('main-app');
+function enterSite() {
+    splash.style.opacity = '0';
+    setTimeout(() => {
         splash.style.display = 'none';
         mainApp.style.display = 'block';
         fetchCategories();
         loadMore(true);
-        try { if (new URLSearchParams(location.search).get('fav') === '1') document.getElementById('favCatBtn').click(); } catch (e) {}
-        setTimeout(() => { const first = document.querySelector('.cat-btn'); if (first) first.focus(); }, 100);
-      }, 600);
-    }
-    splash.addEventListener('click', enterSite);
-    document.addEventListener('keydown', (e) => {
-      if (splash.style.display !== 'none' && (e.key === 'Enter' || e.key === ' ')) enterSite();
-    });
-
-    // ===== Helpers =====
-    function normAr(s) {
-      return String(s || '')
+        try {
+            if (new URLSearchParams(location.search).get('fav') === '1')
+                document.getElementById('favCatBtn').click();
+        }
+        catch (e) { }
+        setTimeout(() => { const first = document.querySelector('.cat-btn'); if (first)
+            first.focus(); }, 100);
+    }, 600);
+}
+splash.addEventListener('click', enterSite);
+document.addEventListener('keydown', (e) => {
+    if (splash.style.display !== 'none' && (e.key === 'Enter' || e.key === ' '))
+        enterSite();
+});
+function normAr(s) {
+    return String(s || '')
         .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
         .replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه');
-    }
-
-    function seasonOrder(name) {
-      const n = normAr(name);
-      const m = n.match(/\d+/);
-      if (m) return parseInt(m[0], 10);
-      const words = ['اول', 'ثاني', 'ثالث', 'رابع', 'خامس', 'سادس', 'سابع', 'ثامن', 'تاسع', 'عاشر'];
-      for (let i = 0; i < words.length; i++) if (n.includes(words[i])) return i + 1;
-      return 999;
-    }
-
-    function episodeNumber(ep) {
-      let m = normAr(ep.meta?.number).match(/\d+/);
-      if (!m) m = normAr(ep.title).match(/الحلقه\s*(\d+)/);
-      return m ? parseInt(m[1] || m[0], 10) : 9999;
-    }
-
-    function seasonNameOf(ep) {
-      return ep.season_info?.name || ep.movie_season || 'الموسم الأول';
-    }
-
-    function addEpisodes(series, eps) {
-      eps.forEach(ep => {
-        if (!series.episodes.some(e => e.realid === ep.realid)) series.episodes.push(ep);
-      });
-    }
-
-    async function fetchJSON(url) {
-      const res = await fetch(url);
-      return res.json();
-    }
-
-    function cleanQuery(s) {
-      return String(s || '')
+}
+function seasonOrder(name) {
+    const n = normAr(name);
+    const m = n.match(/\d+/);
+    if (m)
+        return parseInt(m[0], 10);
+    const words = ['اول', 'ثاني', 'ثالث', 'رابع', 'خامس', 'سادس', 'سابع', 'ثامن', 'تاسع', 'عاشر'];
+    for (let i = 0; i < words.length; i++)
+        if (n.includes(words[i]))
+            return i + 1;
+    return 999;
+}
+function episodeNumber(ep) {
+    var _a;
+    let m = normAr((_a = ep.meta) === null || _a === void 0 ? void 0 : _a.number).match(/\d+/);
+    if (!m)
+        m = normAr(ep.title).match(/الحلقه\s*(\d+)/);
+    return m ? parseInt(m[1] || m[0], 10) : 9999;
+}
+function seasonNameOf(ep) {
+    var _a;
+    return ((_a = ep.season_info) === null || _a === void 0 ? void 0 : _a.name) || ep.movie_season || 'الموسم الأول';
+}
+function addEpisodes(series, eps) {
+    eps.forEach(ep => {
+        if (!series.episodes.some(e => e.realid === ep.realid))
+            series.episodes.push(ep);
+    });
+}
+function fetchJSON(url) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const res = yield fetch(url);
+        return res.json();
+    });
+}
+function cleanQuery(s) {
+    return String(s || '')
         .replace(/الحلقة\s*[\d٠-٩]*/g, ' ')
         .replace(/(الموسم|موسم)\s*\S*/g, ' ')
         .replace(/season\s*\d*/gi, ' ')
         .replace(/episode\s*\d*/gi, ' ')
         .replace(/مترجم[ةه]?|مدبلج[ةه]?/g, ' ')
         .replace(/\s+/g, ' ').trim();
-    }
-
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-    async function fetchRetry(url, tries = 3) {
-      for (let i = 0; i < tries; i++) {
-        try { return await fetchJSON(url); }
-        catch (e) { if (i < tries - 1) await sleep(350 * (i + 1)); }
-      }
-      return null;
-    }
-    const searchUrl = (q, page) => `${API}?action=search&search=${encodeURIComponent(q)}&page=${page}`;
-
-    function seriesBase(series) {
-      return cleanQuery(series.infoName) || cleanQuery(series.title) || series.title;
-    }
-
-    function buildQueries(series, deep) {
-      const e0 = series.episodes[0];
-      const raw = [
+}
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function fetchRetry(url_1) {
+    return __awaiter(this, arguments, void 0, function* (url, tries = 3) {
+        for (let i = 0; i < tries; i++) {
+            try {
+                return yield fetchJSON(url);
+            }
+            catch (e) {
+                if (i < tries - 1)
+                    yield sleep(350 * (i + 1));
+            }
+        }
+        return null;
+    });
+}
+const searchUrl = (q, page) => `${API}?action=search&search=${encodeURIComponent(q)}&page=${page}`;
+function seriesBase(series) {
+    return cleanQuery(series.infoName) || cleanQuery(series.title) || series.title;
+}
+function buildQueries(series, deep) {
+    var _a;
+    const e0 = series.episodes[0];
+    const raw = [
         series.title.replace('الحلقة', '').trim(),
         cleanQuery(series.title),
         series.infoName,
         cleanQuery(series.infoName),
-        cleanQuery(e0?.series_info?.name),
-        cleanQuery(e0?.title)
-      ];
-      const uniq = [...new Set(raw.map(q => (q || '').trim()).filter(q => q.length > 1))];
-      return uniq.slice(0, deep ? 6 : 4);
-    }
-
-    // ===== Badge (عدد الحلقات) =====
-    function badgeText(series) {
-      const n = Math.max(series.episodes.length, series.cached || 0);
-      return n ? `${n} حلقة` : '…';
-    }
-    function updateBadge(series) { if (series.badgeEl) series.badgeEl.textContent = badgeText(series); }
-
-    let seriesRenderQueued = false;
-    function progress(series) {
-      updateBadge(series);
-      if (series === activeSeries && !seriesRenderQueued) {
+        cleanQuery((_a = e0 === null || e0 === void 0 ? void 0 : e0.series_info) === null || _a === void 0 ? void 0 : _a.name),
+        cleanQuery(e0 === null || e0 === void 0 ? void 0 : e0.title)
+    ];
+    const uniq = [...new Set(raw.map(q => (q || '').trim()).filter(q => q.length > 1))];
+    return uniq.slice(0, deep ? 6 : 4);
+}
+function badgeText(series) {
+    const n = Math.max(series.episodes.length, series.cached || 0);
+    return n ? `${n} حلقة` : '…';
+}
+function updateBadge(series) { if (series.badgeEl)
+    series.badgeEl.textContent = badgeText(series); }
+let seriesRenderQueued = false;
+function progress(series) {
+    updateBadge(series);
+    if (series === activeSeries && !seriesRenderQueued) {
         seriesRenderQueued = true;
         requestAnimationFrame(() => {
-          seriesRenderQueued = false;
-          if (activeSeries) { renderSeries(); updateLoadStatus(); }
+            seriesRenderQueued = false;
+            if (activeSeries) {
+                renderSeries();
+                updateLoadStatus();
+            }
         });
-      }
-      if (series === playerSeries && panelOpen) renderEpPanel();
     }
-
-    // ===== مسح صفحات البحث لاستخراج كل حلقات المسلسل =====
-    async function scanQuery(series, q, deep) {
-      const maxPages = deep ? 80 : 50;
-      const seenQ = new Set();
-      let stalls = 0, noMatch = 0, fails = 0;
-      for (let page = 1; page <= maxPages; page++) {
-        const data = await fetchRetry(searchUrl(q, page));
-        if (!data) { if (++fails >= 2) break; continue; }
-        const posts = data.posts || [];
-        if (!posts.length) break;
-
-        const fresh = posts.filter(p => !seenQ.has(p.realid));
-        if (!fresh.length) { if (++stalls >= 3) break; continue; }
-        stalls = 0;
-        fresh.forEach(p => seenQ.add(p.realid));
-
-        const mine = fresh.filter(p => p.series_slug === series.series_slug);
-        if (mine.length) {
-          noMatch = 0;
-          addEpisodes(series, mine);
-          progress(series);
-        } else if (++noMatch >= (deep ? 8 : 5)) break;
-      }
-    }
-
-    function startLoad(series, deep = false) {
-      if (series.loadPromise && !deep) return series.loadPromise;
-      if (!series.completing) series.loading = true;
-      const p = (async () => {
-        try { for (const q of buildQueries(series, deep)) await scanQuery(series, q, deep); }
-        catch (e) { console.error(e); }
-        if (!series.completing) series.loading = false;
+    if (series === playerSeries && panelOpen)
+        renderEpPanel();
+}
+function scanQuery(series, q, deep) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const maxPages = deep ? 80 : 50;
+        const seenQ = new Set();
+        let stalls = 0, noMatch = 0, fails = 0;
+        for (let page = 1; page <= maxPages; page++) {
+            const data = yield fetchRetry(searchUrl(q, page));
+            if (!data) {
+                if (++fails >= 2)
+                    break;
+                continue;
+            }
+            const posts = data.posts || [];
+            if (!posts.length)
+                break;
+            const fresh = posts.filter(p => !seenQ.has(p.realid));
+            if (!fresh.length) {
+                if (++stalls >= 3)
+                    break;
+                continue;
+            }
+            stalls = 0;
+            fresh.forEach(p => seenQ.add(p.realid));
+            const mine = fresh.filter(p => p.series_slug === series.series_slug);
+            if (mine.length) {
+                noMatch = 0;
+                addEpisodes(series, mine);
+                progress(series);
+            }
+            else if (++noMatch >= (deep ? 8 : 5))
+                break;
+        }
+    });
+}
+function startLoad(series, deep = false) {
+    if (series.loadPromise && !deep)
+        return series.loadPromise;
+    if (!series.completing)
+        series.loading = true;
+    const p = (() => __awaiter(this, void 0, void 0, function* () {
+        try {
+            for (const q of buildQueries(series, deep))
+                yield scanQuery(series, q, deep);
+        }
+        catch (e) {
+            console.error(e);
+        }
+        if (!series.completing)
+            series.loading = false;
         series.countReady = true;
-        if (series.episodes.length) saveCount(series.series_slug, series.episodes.length);
+        if (series.episodes.length)
+            saveCount(series.series_slug, series.episodes.length);
         progress(series);
-      })();
-      series.loadPromise = p;
-      return p;
-    }
-
-    // ===== كشف الحلقات الناقصة (ثغرات في الترقيم) وجلبها =====
-    function hasEp(series, season, n) {
-      return series.episodes.some(e => seasonNameOf(e) === season && episodeNumber(e) === n);
-    }
-
-    function gapsOf(series, probeNext) {
-      const seasons = groupSeasons(series);
-      const names = Object.keys(seasons).sort((a, b) => seasonOrder(a) - seasonOrder(b) || a.localeCompare(b, 'ar'));
-      const out = [];
-      names.forEach((name, idx) => {
+    }))();
+    series.loadPromise = p;
+    return p;
+}
+function hasEp(series, season, n) {
+    return series.episodes.some(e => seasonNameOf(e) === season && episodeNumber(e) === n);
+}
+function gapsOf(series, probeNext) {
+    const seasons = groupSeasons(series);
+    const names = Object.keys(seasons).sort((a, b) => seasonOrder(a) - seasonOrder(b) || a.localeCompare(b, 'ar'));
+    const out = [];
+    names.forEach((name, idx) => {
         const nums = seasons[name].map(episodeNumber).filter(n => n < 9999);
-        if (!nums.length) return;
+        if (!nums.length)
+            return;
         const min = Math.min(...nums), max = Math.max(...nums);
         const set = new Set(nums);
-        // المواسم اللاحقة التي تكمل الترقيم من حيث توقف الموسم السابق لا تُحسب ناقصة
         const lo = (idx > 0 && min > 1) ? min : 1;
-        for (let n = lo; n <= max && n <= 600; n++) if (!set.has(n)) out.push({ season: name, n });
-        if (probeNext) for (let k = 1; k <= 2; k++) out.push({ season: name, n: max + k, probe: true });
-      });
-      return out;
-    }
-
-    async function findEpisode(series, season, n, multi) {
-      const base = seriesBase(series);
-      const qs = multi ? [`${base} ${season} الحلقة ${n}`, `${base} الحلقة ${n}`] : [`${base} الحلقة ${n}`, `${base} ${n}`];
-      for (const q of qs) {
-        const data = await fetchRetry(searchUrl(q, 1), 2);
-        const mine = (data?.posts || []).filter(p => p.series_slug === series.series_slug);
-        if (mine.length) { addEpisodes(series, mine); progress(series); }
-        if (hasEp(series, season, n)) return true;
-      }
-      return false;
-    }
-
-    async function fillGaps(series, deep) {
-      const multi = Object.keys(groupSeasons(series)).length > 1;
-      const queue = gapsOf(series, deep).slice(0, deep ? 160 : 70);
-      const worker = async () => {
-        while (queue.length) {
-          const g = queue.shift();
-          if (hasEp(series, g.season, g.n)) continue;
-          await findEpisode(series, g.season, g.n, multi);
+        for (let n = lo; n <= max && n <= 600; n++)
+            if (!set.has(n))
+                out.push({ season: name, n });
+        if (probeNext)
+            for (let k = 1; k <= 2; k++)
+                out.push({ season: name, n: max + k, probe: true });
+    });
+    return out;
+}
+function findEpisode(series, season, n, multi) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const base = seriesBase(series);
+        const qs = multi ? [`${base} ${season} الحلقة ${n}`, `${base} الحلقة ${n}`] : [`${base} الحلقة ${n}`, `${base} ${n}`];
+        for (const q of qs) {
+            const data = yield fetchRetry(searchUrl(q, 1), 2);
+            const mine = ((data === null || data === void 0 ? void 0 : data.posts) || []).filter(p => p.series_slug === series.series_slug);
+            if (mine.length) {
+                addEpisodes(series, mine);
+                progress(series);
+            }
+            if (hasEp(series, season, n))
+                return true;
         }
-      };
-      await Promise.all([worker(), worker(), worker()]);
-    }
-
-    // مسح كامل (ثم الثغرات) — يُستدعى عند فتح المسلسل، أو بالقوة من زر «جلب الحلقات»
-    async function completeSeries(series, deep = false) {
-      if (series.completing) return;
-      if (!deep && series.gapsDone && series.loadPromise) return;
-      series.completing = true;
-      series.loading = true;
-      series.phase = 'scan';
-      progress(series);
-      try {
-        await startLoad(series, deep);
-        series.phase = 'gaps';
+        return false;
+    });
+}
+function fillGaps(series, deep) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const multi = Object.keys(groupSeasons(series)).length > 1;
+        const queue = gapsOf(series, deep).slice(0, deep ? 160 : 70);
+        const worker = () => __awaiter(this, void 0, void 0, function* () {
+            while (queue.length) {
+                const g = queue.shift();
+                if (hasEp(series, g.season, g.n))
+                    continue;
+                yield findEpisode(series, g.season, g.n, multi);
+            }
+        });
+        yield Promise.all([worker(), worker(), worker()]);
+    });
+}
+function completeSeries(series_1) {
+    return __awaiter(this, arguments, void 0, function* (series, deep = false) {
+        if (series.completing)
+            return;
+        if (!deep && series.gapsDone && series.loadPromise)
+            return;
+        series.completing = true;
+        series.loading = true;
+        series.phase = 'scan';
         progress(series);
-        await fillGaps(series, deep);
-        series.gapsDone = true;
-      } catch (e) { console.error(e); }
-      series.completing = false;
-      series.loading = false;
-      series.phase = '';
-      series.countReady = true;
-      if (series.episodes.length) { saveCount(series.series_slug, series.episodes.length); saveEpisodes(series); }
-      progress(series);
-    }
-
-    function queueCounts(items) {
-      items.forEach(i => { if (i.isSeries && !i.loadPromise) pending.push(i); });
-      pump();
-    }
-
-    function pump() {
-      while (workers < MAX_WORKERS && pending.length) {
+        try {
+            yield startLoad(series, deep);
+            series.phase = 'gaps';
+            progress(series);
+            yield fillGaps(series, deep);
+            series.gapsDone = true;
+        }
+        catch (e) {
+            console.error(e);
+        }
+        series.completing = false;
+        series.loading = false;
+        series.phase = '';
+        series.countReady = true;
+        if (series.episodes.length) {
+            saveCount(series.series_slug, series.episodes.length);
+            saveEpisodes(series);
+        }
+        progress(series);
+    });
+}
+function queueCounts(items) {
+    items.forEach(i => { if (i.isSeries && !i.loadPromise)
+        pending.push(i); });
+    pump();
+}
+function pump() {
+    while (workers < MAX_WORKERS && pending.length) {
         const it = pending.shift();
-        if (it.loadPromise) continue;
+        if (it.loadPromise)
+            continue;
         workers++;
         startLoad(it).finally(() => { workers--; pump(); });
-      }
     }
-
-    // ===== Categories =====
-    async function fetchCategories() {
-      try {
-        const cats = await fetchJSON(`${API}?action=categories`);
-        const container = document.getElementById('catList');
-        const arr = Array.isArray(cats) ? cats : (cats.categories || cats.terms || []);
-        arr.forEach(cat => {
-          const btn = document.createElement('button');
-          btn.className = 'cat-btn';
-          btn.tabIndex = 0;
-          btn.innerText = cat.name;
-          btn.onclick = () => loadCategory(cat.slug, btn);
-          container.appendChild(btn);
-        });
-      } catch (e) { console.error(e); }
-    }
-
-    // ===== Utils =====
-    const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-
-    // ===== Brand letters (إضاءة متحركة على الأحرف) =====
-    document.querySelectorAll('.brand').forEach(el => {
-      const t = el.textContent.trim();
-      el.setAttribute('aria-label', t);
-      el.innerHTML = [...t].map((c, i) => `<span aria-hidden="true" style="--i:${i}">${c}</span>`).join('');
+}
+function fetchCategories() {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const cats = yield fetchJSON(`${API}?action=categories`);
+            const container = document.getElementById('catList');
+            const arr = Array.isArray(cats) ? cats : (cats.categories || cats.terms || []);
+            arr.forEach(cat => {
+                const btn = document.createElement('button');
+                btn.className = 'cat-btn';
+                btn.tabIndex = 0;
+                btn.innerText = cat.name;
+                btn.onclick = () => loadCategory(cat.slug, btn);
+                container.appendChild(btn);
+            });
+        }
+        catch (e) {
+            console.error(e);
+        }
     });
-
-    // <search-core>
-    // ===== محرك البحث: عربي/إنجليزي، جزء كلمة، الأقرب فالأقرب =====
-    const AR = /[\u0600-\u06FF]/;
-    function normText(s) {
-      return String(s || '').toLowerCase()
+}
+const esc = s => String(s !== null && s !== void 0 ? s : '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+document.querySelectorAll('.brand').forEach(el => {
+    const t = el.textContent.trim();
+    el.setAttribute('aria-label', t);
+    el.innerHTML = [...t].map((c, i) => `<span aria-hidden="true" style="--i:${i}">${c}</span>`).join('');
+});
+const AR = /[\u0600-\u06FF]/;
+function normText(s) {
+    return String(s || '').toLowerCase()
         .replace(/[\u064B-\u065F\u0670\u0640]/g, '')
         .replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه')
         .replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d))
         .replace(/[^a-z0-9\u0600-\u06FF\s]/g, ' ').replace(/\s+/g, ' ').trim();
-    }
-
-    // هيكل صوتي موحّد: dexter = ديكستر = دكستر = "dkstr"
-    const A2K = { 'ب': 'b', 'ت': 't', 'ث': 't', 'ج': 'k', 'ح': 'h', 'خ': 'k', 'د': 'd', 'ذ': 't', 'ر': 'r', 'ز': 's', 'س': 's', 'ش': 's', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 's', 'غ': 'k', 'ف': 'f', 'ق': 'k', 'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n', 'ه': 'h', 'پ': 'b', 'چ': 's', 'ڤ': 'f', 'گ': 'k' };
-    function skelWord(w) {
-      let o = '';
-      if (AR.test(w)) {
-        if (w.length > 3 && w.startsWith('ال')) w = w.slice(2);
+}
+const A2K = { 'ب': 'b', 'ت': 't', 'ث': 't', 'ج': 'k', 'ح': 'h', 'خ': 'k', 'د': 'd', 'ذ': 't', 'ر': 'r', 'ز': 's', 'س': 's', 'ش': 's', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 's', 'غ': 'k', 'ف': 'f', 'ق': 'k', 'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n', 'ه': 'h', 'پ': 'b', 'چ': 's', 'ڤ': 'f', 'گ': 'k' };
+function skelWord(w) {
+    let o = '';
+    if (AR.test(w)) {
+        if (w.length > 3 && w.startsWith('ال'))
+            w = w.slice(2);
         for (let i = 0; i < w.length; i++) {
-          const m = A2K[w[i]];
-          if (!m || (m === 'h' && i > 0)) continue;
-          o += m;
+            const m = A2K[w[i]];
+            if (!m || (m === 'h' && i > 0))
+                continue;
+            o += m;
         }
-      } else {
+    }
+    else {
         w = w.replace(/ph/g, 'f').replace(/sh|ch/g, 's').replace(/th/g, 't').replace(/kh/g, 'k').replace(/ck/g, 'k')
-          .replace(/qu/g, 'k').replace(/gh/g, '').replace(/x/g, 'ks').replace(/c(?=[eiy])/g, 's')
-          .replace(/[cgjq]/g, 'k').replace(/v/g, 'f').replace(/p/g, 'b').replace(/z/g, 's');
+            .replace(/qu/g, 'k').replace(/gh/g, '').replace(/x/g, 'ks').replace(/c(?=[eiy])/g, 's')
+            .replace(/[cgjq]/g, 'k').replace(/v/g, 'f').replace(/p/g, 'b').replace(/z/g, 's');
         for (const c of w) {
-          if (!'bdfhklmnrst'.includes(c) || (c === 'h' && o)) continue;
-          o += c;
+            if (!'bdfhklmnrst'.includes(c) || (c === 'h' && o))
+                continue;
+            o += c;
         }
-      }
-      return o.replace(/(.)\1+/g, '$1');
     }
-    const skel = s => normText(s).split(' ').filter(Boolean).map(skelWord).filter(Boolean).join(' ');
-
-    function lev1(a, b) {
-      if (Math.abs(a.length - b.length) > 1) return false;
-      let i = 0, j = 0, e = 0;
-      while (i < a.length && j < b.length) {
-        if (a[i] === b[j]) { i++; j++; continue; }
-        if (++e > 1) return false;
-        if (a.length > b.length) i++; else if (a.length < b.length) j++; else { i++; j++; }
-      }
-      return e + (a.length - i) + (b.length - j) <= 1;
+    return o.replace(/(.)\1+/g, '$1');
+}
+const skel = s => normText(s).split(' ').filter(Boolean).map(skelWord).filter(Boolean).join(' ');
+function lev1(a, b) {
+    if (Math.abs(a.length - b.length) > 1)
+        return false;
+    let i = 0, j = 0, e = 0;
+    while (i < a.length && j < b.length) {
+        if (a[i] === b[j]) {
+            i++;
+            j++;
+            continue;
+        }
+        if (++e > 1)
+            return false;
+        if (a.length > b.length)
+            i++;
+        else if (a.length < b.length)
+            j++;
+        else {
+            i++;
+            j++;
+        }
     }
-
-    // درجة التطابق: كلما زادت كان الاسم أقرب
-    function scoreOf(o, qn, qp) {
-      if (!o._n) { o._n = normText(o.t ?? o.title); o._p = skel(o._n); }
-      const t = o._n, p = o._p;
-      let sc = 0;
-      if (t === qn) sc = 1000;
-      else if (t.startsWith(qn)) sc = 900;
-      else if (t.includes(' ' + qn)) sc = 850;
-      else if (t.includes(qn)) sc = 700;
-      if (qp.length > 1 && p) {
+    return e + (a.length - i) + (b.length - j) <= 1;
+}
+function scoreOf(o, qn, qp) {
+    var _a;
+    if (!o._n) {
+        o._n = normText((_a = o.t) !== null && _a !== void 0 ? _a : o.title);
+        o._p = skel(o._n);
+    }
+    const t = o._n, p = o._p;
+    let sc = 0;
+    if (t === qn)
+        sc = 1000;
+    else if (t.startsWith(qn))
+        sc = 900;
+    else if (t.includes(' ' + qn))
+        sc = 850;
+    else if (t.includes(qn))
+        sc = 700;
+    if (qp.length > 1 && p) {
         let ps = 0;
-        if (p === qp) ps = 880;
-        else if (p.startsWith(qp)) ps = 800;
-        else if (p.includes(' ' + qp)) ps = 760;
-        else if (p.includes(qp)) ps = 620;
-        else if (qp.length >= 4 && !qp.includes(' ') && p.split(' ').some(w => lev1(w.slice(0, qp.length), qp) || lev1(w.slice(0, qp.length + 1), qp))) ps = 420;
-        if (ps > sc) sc = ps;
-      }
-      return sc ? sc - Math.min(t.length, 150) * 0.3 : 0;
+        if (p === qp)
+            ps = 880;
+        else if (p.startsWith(qp))
+            ps = 800;
+        else if (p.includes(' ' + qp))
+            ps = 760;
+        else if (p.includes(qp))
+            ps = 620;
+        else if (qp.length >= 4 && !qp.includes(' ') && p.split(' ').some(w => lev1(w.slice(0, qp.length), qp) || lev1(w.slice(0, qp.length + 1), qp)))
+            ps = 420;
+        if (ps > sc)
+            sc = ps;
     }
-
-    // أسماء مشهورة تساعد في تحويل العربي إلى الاسم الإنجليزي عند البحث في السيرفر
-    const SEEDS = ('Dexter|Breaking Bad|Better Call Saul|Game of Thrones|House of the Dragon|Prison Break|Money Heist|Peaky Blinders|Vikings|The Walking Dead|Stranger Things|Friends|The Big Bang Theory|How I Met Your Mother|The Boys|Lucifer|Supernatural|Arrow|The Flash|Gotham|Smallville|The Witcher|Narcos|Ozark|The Last of Us|Squid Game|Wednesday|Sherlock|Westworld|Mr Robot|Black Mirror|Riverdale|Teen Wolf|The Vampire Diaries|Gossip Girl|Suits|Lost|Homeland|Fargo|True Detective|Shameless|Chernobyl|Mindhunter|Dark|Elite|Sex Education|Euphoria|The Crown|Bridgerton|Succession|The Mandalorian|Loki|WandaVision|Daredevil|The Punisher|Titans|Peacemaker|Reacher|Yellowstone|Ted Lasso|The Office|Brooklyn Nine-Nine|Modern Family|Greys Anatomy|The Good Doctor|Chicago Fire|NCIS|Criminal Minds|Bones|The Blacklist|Spartacus|Merlin|Outlander|Lupin|The Umbrella Academy|Cobra Kai|Arcane|Invincible|Rick and Morty|The Simpsons|Family Guy|South Park|Attack on Titan|Naruto|One Piece|Death Note|Kurulus Osman|Ertugrul|Avengers|Spider-Man|Batman|Superman|Joker|Deadpool|Iron Man|Thor|Captain America|Black Panther|Doctor Strange|Guardians of the Galaxy|Fast and Furious|John Wick|Mission Impossible|Transformers|Harry Potter|Lord of the Rings|The Hobbit|Pirates of the Caribbean|Jurassic Park|Jurassic World|Avatar|Titanic|Interstellar|Inception|Terminator|The Matrix|Gladiator|Rambo|Rocky|Die Hard|Home Alone|Frozen|Toy Story|Shrek|Minions|Kung Fu Panda|Ice Age|Aladdin|The Lion King|Moana|Encanto|Coco|Venom|Aquaman|Wonder Woman|Justice League|Black Adam|Top Gun|Oppenheimer|Barbie|Dune|Tenet|Dunkirk|Taken|Saw|The Conjuring|Annabelle|Insidious|Scream|Halloween|Final Destination|Resident Evil|Mortal Kombat|Hunger Games|Divergent|Twilight|Maze Runner|Knives Out|Extraction|Red Notice|Bullet Train|Creed|Sicario|Prisoners|Fight Club|Forrest Gump|The Godfather|Scarface').split('|');
-    let SEED_SK = null;
-    function seedLookup(q) {
-      const qp = skel(q);
-      if (qp.length < 2) return [];
-      if (!SEED_SK) SEED_SK = SEEDS.map(n => ({ n, p: skel(n) }));
-      return SEED_SK.filter(x => x.p.startsWith(qp) || x.p.includes(' ' + qp)).sort((a, b) => a.p.length - b.p.length).slice(0, 1).map(x => x.n);
-    }
-
-    // توليد كتابات بديلة للبحث في السيرفر (عربي <-> إنجليزي)
-    const AR2LAT = { 'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'j', 'ح': 'h', 'خ': 'kh', 'د': 'd', 'ذ': 'th', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 'sh', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': 'a', 'غ': 'g', 'ف': 'f', 'ق': 'k', 'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n', 'ه': 'h' };
-    function arWordToLat(w, ve) {
-      let s = '';
-      for (let i = 0; i < w.length; i++) {
+    return sc ? sc - Math.min(t.length, 150) * 0.3 : 0;
+}
+const SEEDS = ('Dexter|Breaking Bad|Better Call Saul|Game of Thrones|House of the Dragon|Prison Break|Money Heist|Peaky Blinders|Vikings|The Walking Dead|Stranger Things|Friends|The Big Bang Theory|How I Met Your Mother|The Boys|Lucifer|Supernatural|Arrow|The Flash|Gotham|Smallville|The Witcher|Narcos|Ozark|The Last of Us|Squid Game|Wednesday|Sherlock|Westworld|Mr Robot|Black Mirror|Riverdale|Teen Wolf|The Vampire Diaries|Gossip Girl|Suits|Lost|Homeland|Fargo|True Detective|Shameless|Chernobyl|Mindhunter|Dark|Elite|Sex Education|Euphoria|The Crown|Bridgerton|Succession|The Mandalorian|Loki|WandaVision|Daredevil|The Punisher|Titans|Peacemaker|Reacher|Yellowstone|Ted Lasso|The Office|Brooklyn Nine-Nine|Modern Family|Greys Anatomy|The Good Doctor|Chicago Fire|NCIS|Criminal Minds|Bones|The Blacklist|Spartacus|Merlin|Outlander|Lupin|The Umbrella Academy|Cobra Kai|Arcane|Invincible|Rick and Morty|The Simpsons|Family Guy|South Park|Attack on Titan|Naruto|One Piece|Death Note|Kurulus Osman|Ertugrul|Avengers|Spider-Man|Batman|Superman|Joker|Deadpool|Iron Man|Thor|Captain America|Black Panther|Doctor Strange|Guardians of the Galaxy|Fast and Furious|John Wick|Mission Impossible|Transformers|Harry Potter|Lord of the Rings|The Hobbit|Pirates of the Caribbean|Jurassic Park|Jurassic World|Avatar|Titanic|Interstellar|Inception|Terminator|The Matrix|Gladiator|Rambo|Rocky|Die Hard|Home Alone|Frozen|Toy Story|Shrek|Minions|Kung Fu Panda|Ice Age|Aladdin|The Lion King|Moana|Encanto|Coco|Venom|Aquaman|Wonder Woman|Justice League|Black Adam|Top Gun|Oppenheimer|Barbie|Dune|Tenet|Dunkirk|Taken|Saw|The Conjuring|Annabelle|Insidious|Scream|Halloween|Final Destination|Resident Evil|Mortal Kombat|Hunger Games|Divergent|Twilight|Maze Runner|Knives Out|Extraction|Red Notice|Bullet Train|Creed|Sicario|Prisoners|Fight Club|Forrest Gump|The Godfather|Scarface').split('|');
+let SEED_SK = null;
+function seedLookup(q) {
+    const qp = skel(q);
+    if (qp.length < 2)
+        return [];
+    if (!SEED_SK)
+        SEED_SK = SEEDS.map(n => ({ n, p: skel(n) }));
+    return SEED_SK.filter(x => x.p.startsWith(qp) || x.p.includes(' ' + qp)).sort((a, b) => a.p.length - b.p.length).slice(0, 1).map(x => x.n);
+}
+const AR2LAT = { 'ب': 'b', 'ت': 't', 'ث': 'th', 'ج': 'j', 'ح': 'h', 'خ': 'kh', 'د': 'd', 'ذ': 'th', 'ر': 'r', 'ز': 'z', 'س': 's', 'ش': 'sh', 'ص': 's', 'ض': 'd', 'ط': 't', 'ظ': 'z', 'ع': 'a', 'غ': 'g', 'ف': 'f', 'ق': 'k', 'ك': 'k', 'ل': 'l', 'م': 'm', 'ن': 'n', 'ه': 'h' };
+function arWordToLat(w, ve) {
+    var _a;
+    let s = '';
+    for (let i = 0; i < w.length; i++) {
         const c = w[i], n = w[i + 1];
-        if (c === 'ك' && n === 'س') { s += 'x'; i++; }
-        else if (c === 'ي') s += i === 0 ? 'y' : ve;
-        else if (c === 'و') s += i === 0 ? 'w' : 'o';
-        else if ('اءئؤ'.includes(c)) s += 'a';
-        else s += AR2LAT[c] ?? '';
-      }
-      if (!/[aeiou]/.test(s)) s = s.replace(/^([^aeiou])([^aeiou])/, '$1e$2');
-      return s.replace(/([^aeiou])r$/, '$1er');
+        if (c === 'ك' && n === 'س') {
+            s += 'x';
+            i++;
+        }
+        else if (c === 'ي')
+            s += i === 0 ? 'y' : ve;
+        else if (c === 'و')
+            s += i === 0 ? 'w' : 'o';
+        else if ('اءئؤ'.includes(c))
+            s += 'a';
+        else
+            s += (_a = AR2LAT[c]) !== null && _a !== void 0 ? _a : '';
     }
-    const LAT2AR = { a: 'ا', b: 'ب', c: 'ك', d: 'د', f: 'ف', g: 'ج', h: 'ه', j: 'ج', k: 'ك', l: 'ل', m: 'م', n: 'ن', p: 'ب', q: 'ق', r: 'ر', s: 'س', t: 'ت', v: 'ف', w: 'و', y: 'ي', z: 'ز' };
-    function latWordToAr(w, longV) {
-      w = w.replace(/e$/, '').replace(/er$/, 'r')
+    if (!/[aeiou]/.test(s))
+        s = s.replace(/^([^aeiou])([^aeiou])/, '$1e$2');
+    return s.replace(/([^aeiou])r$/, '$1er');
+}
+const LAT2AR = { a: 'ا', b: 'ب', c: 'ك', d: 'د', f: 'ف', g: 'ج', h: 'ه', j: 'ج', k: 'ك', l: 'ل', m: 'م', n: 'ن', p: 'ب', q: 'ق', r: 'ر', s: 'س', t: 'ت', v: 'ف', w: 'و', y: 'ي', z: 'ز' };
+function latWordToAr(w, longV) {
+    var _a;
+    w = w.replace(/e$/, '').replace(/er$/, 'r')
         .replace(/ph/g, 'f').replace(/sh/g, '$').replace(/ch/g, '#').replace(/th/g, '^').replace(/kh/g, '&').replace(/ck/g, 'k').replace(/x/g, '@');
-      let o = '', seenV = false;
-      for (let i = 0; i < w.length; i++) {
+    let o = '', seenV = false;
+    for (let i = 0; i < w.length; i++) {
         const c = w[i];
-        if (c === '$') o += 'ش'; else if (c === '#') o += 'تش'; else if (c === '^') o += 'ث'; else if (c === '&') o += 'خ'; else if (c === '@') o += 'كس';
+        if (c === '$')
+            o += 'ش';
+        else if (c === '#')
+            o += 'تش';
+        else if (c === '^')
+            o += 'ث';
+        else if (c === '&')
+            o += 'خ';
+        else if (c === '@')
+            o += 'كس';
         else if ('aeiou'.includes(c)) {
-          if (i === 0) o += 'ا';
-          else if (longV && !seenV) o += (c === 'o' || c === 'u') ? 'و' : (c === 'a' ? 'ا' : 'ي');
-          seenV = true;
-        } else o += LAT2AR[c] ?? '';
-      }
-      return o;
+            if (i === 0)
+                o += 'ا';
+            else if (longV && !seenV)
+                o += (c === 'o' || c === 'u') ? 'و' : (c === 'a' ? 'ا' : 'ي');
+            seenV = true;
+        }
+        else
+            o += (_a = LAT2AR[c]) !== null && _a !== void 0 ? _a : '';
     }
-    function buildVariants(q) {
-      const out = [q.trim()];
-      const words = normText(q).split(' ').filter(Boolean);
-      const ar = AR.test(q), lat = /[a-z]/i.test(q);
-      const add = v => { v = (v || '').trim(); if (v.length > 1 && !out.some(o => o.toLowerCase() === v.toLowerCase())) out.push(v); };
-      if (ar && !lat) {
+    return o;
+}
+function buildVariants(q) {
+    const out = [q.trim()];
+    const words = normText(q).split(' ').filter(Boolean);
+    const ar = AR.test(q), lat = /[a-z]/i.test(q);
+    const add = v => { v = (v || '').trim(); if (v.length > 1 && !out.some(o => o.toLowerCase() === v.toLowerCase()))
+        out.push(v); };
+    if (ar && !lat) {
         seedLookup(q).forEach(add);
         add(words.map(w => arWordToLat(w, 'e')).join(' '));
         add(words.map(w => arWordToLat(w, 'i')).join(' '));
-      } else if (lat && !ar) {
+    }
+    else if (lat && !ar) {
         add(words.map(w => latWordToAr(w, true)).join(' '));
         add(words.map(w => latWordToAr(w, false)).join(' '));
-      }
-      return out.slice(0, 3);
     }
-    // </search-core>
-
-    // ===== الفهرس المحلي (يتعلم من كل ما يظهر في الموقع) + كاش أعداد الحلقات =====
-    const IDX_KEY = 'alm_idx_v1', CNT_KEY = 'alm_cnt_v1';
-    const idx = new Map();
-    const movieMap = new Map();
-    let idxT, cntT, cnt = {};
-    try { cnt = JSON.parse(localStorage.getItem(CNT_KEY) || '{}'); } catch (e) { cnt = {}; }
-
-    // كاش الحلقات (يتراكم ولا يُمسح، فتظهر الحلقات فوراً عند إعادة الفتح)
-    const EPS_KEY = 'alm_eps_v1';
-    let epsCache = {}, epsT;
-    try { epsCache = JSON.parse(localStorage.getItem(EPS_KEY) || '{}'); } catch (e) { epsCache = {}; }
-    function saveEpisodes(series) {
-      epsCache[series.series_slug] = { t: Date.now(), e: series.episodes.map(e => [e.realid, e.title, e.meta?.number ?? '', seasonNameOf(e)]) };
-      clearTimeout(epsT);
-      epsT = setTimeout(() => {
+    return out.slice(0, 3);
+}
+const IDX_KEY = 'alm_idx_v1', CNT_KEY = 'alm_cnt_v1';
+const idx = new Map();
+const movieMap = new Map();
+let idxT, cntT, cnt = {};
+try {
+    cnt = JSON.parse(localStorage.getItem(CNT_KEY) || '{}');
+}
+catch (e) {
+    cnt = {};
+}
+const EPS_KEY = 'alm_eps_v1';
+let epsCache = {}, epsT;
+try {
+    epsCache = JSON.parse(localStorage.getItem(EPS_KEY) || '{}');
+}
+catch (e) {
+    epsCache = {};
+}
+function saveEpisodes(series) {
+    epsCache[series.series_slug] = { t: Date.now(), e: series.episodes.map(e => { var _a, _b; return [e.realid, e.title, (_b = (_a = e.meta) === null || _a === void 0 ? void 0 : _a.number) !== null && _b !== void 0 ? _b : '', seasonNameOf(e)]; }) };
+    clearTimeout(epsT);
+    epsT = setTimeout(() => {
         const ks = Object.keys(epsCache);
-        if (ks.length > 120) ks.sort((a, b) => epsCache[a].t - epsCache[b].t).slice(0, ks.length - 120).forEach(k => delete epsCache[k]);
-        try { localStorage.setItem(EPS_KEY, JSON.stringify(epsCache)); } catch (e) {}
-      }, 1200);
+        if (ks.length > 120)
+            ks.sort((a, b) => epsCache[a].t - epsCache[b].t).slice(0, ks.length - 120).forEach(k => delete epsCache[k]);
+        try {
+            localStorage.setItem(EPS_KEY, JSON.stringify(epsCache));
+        }
+        catch (e) { }
+    }, 1200);
+}
+const FAV_KEY = 'alm_fav_v1';
+const favs = new Map();
+let favMode = false;
+try {
+    JSON.parse(localStorage.getItem(FAV_KEY) || '[]').forEach(e => { if (e && e.k)
+        favs.set(e.k, e); });
+}
+catch (e) { }
+const isFav = it => !!it && favs.has(it.key);
+function saveFavs() { try {
+    localStorage.setItem(FAV_KEY, JSON.stringify([...favs.values()]));
+}
+catch (e) { } }
+function updateFavCount() { const el = document.getElementById('favCount'); if (el)
+    el.textContent = favs.size ? ` (${favs.size})` : ''; }
+function loadIndex() {
+    try {
+        JSON.parse(localStorage.getItem(IDX_KEY) || '[]').forEach(e => { if (e && e.k && e.t && !idx.has(e.k))
+            idx.set(e.k, e); });
     }
-
-    // المفضلة
-    const FAV_KEY = 'alm_fav_v1';
-    const favs = new Map();
-    let favMode = false;
-    try { JSON.parse(localStorage.getItem(FAV_KEY) || '[]').forEach(e => { if (e && e.k) favs.set(e.k, e); }); } catch (e) {}
-    const isFav = it => !!it && favs.has(it.key);
-    function saveFavs() { try { localStorage.setItem(FAV_KEY, JSON.stringify([...favs.values()])); } catch (e) {} }
-    function updateFavCount() { const el = document.getElementById('favCount'); if (el) el.textContent = favs.size ? ` (${favs.size})` : ''; }
-
-    function loadIndex() {
-      try { JSON.parse(localStorage.getItem(IDX_KEY) || '[]').forEach(e => { if (e && e.k && e.t && !idx.has(e.k)) idx.set(e.k, e); }); } catch (e) {}
-    }
-    window.requestIdleCallback ? requestIdleCallback(loadIndex, { timeout: 1500 }) : setTimeout(loadIndex, 300);
-
-    function indexItem(item) {
-      if (idx.has(item.key)) return;
-      idx.set(item.key, item.isSeries
+    catch (e) { }
+}
+window.requestIdleCallback ? requestIdleCallback(loadIndex, { timeout: 1500 }) : setTimeout(loadIndex, 300);
+function indexItem(item) {
+    if (idx.has(item.key))
+        return;
+    idx.set(item.key, item.isSeries
         ? { k: item.key, t: item.title, th: item.thumbnail, s: item.series_slug, i: item.infoName }
         : { k: item.key, t: item.title, th: item.thumbnail, r: item.realid });
-      if (idx.size > 2500) idx.delete(idx.keys().next().value);
-      clearTimeout(idxT);
-      idxT = setTimeout(() => {
-        try { localStorage.setItem(IDX_KEY, JSON.stringify([...idx.values()].map(e => ({ k: e.k, t: e.t, th: e.th, s: e.s, r: e.r, i: e.i })))); } catch (e) {}
-      }, 4000);
-    }
-
-    function cachedCount(slug) {
-      const c = cnt[slug];
-      return c && Date.now() - c.t < 12 * 3600e3 ? c.n : 0;
-    }
-    function saveCount(slug, n) {
-      cnt[slug] = { n, t: Date.now() };
-      clearTimeout(cntT);
-      cntT = setTimeout(() => {
+    if (idx.size > 2500)
+        idx.delete(idx.keys().next().value);
+    clearTimeout(idxT);
+    idxT = setTimeout(() => {
+        try {
+            localStorage.setItem(IDX_KEY, JSON.stringify([...idx.values()].map(e => ({ k: e.k, t: e.t, th: e.th, s: e.s, r: e.r, i: e.i }))));
+        }
+        catch (e) { }
+    }, 4000);
+}
+function cachedCount(slug) {
+    const c = cnt[slug];
+    return c && Date.now() - c.t < 12 * 3600e3 ? c.n : 0;
+}
+function saveCount(slug, n) {
+    cnt[slug] = { n, t: Date.now() };
+    clearTimeout(cntT);
+    cntT = setTimeout(() => {
         const ks = Object.keys(cnt);
-        if (ks.length > 800) ks.sort((a, b) => cnt[a].t - cnt[b].t).slice(0, ks.length - 800).forEach(k => delete cnt[k]);
-        try { localStorage.setItem(CNT_KEY, JSON.stringify(cnt)); } catch (e) {}
-      }, 1500);
-    }
-
-    // ===== تحويل المنشورات إلى عناصر =====
-    function newSeries(d) {
-      const s = {
+        if (ks.length > 800)
+            ks.sort((a, b) => cnt[a].t - cnt[b].t).slice(0, ks.length - 800).forEach(k => delete cnt[k]);
+        try {
+            localStorage.setItem(CNT_KEY, JSON.stringify(cnt));
+        }
+        catch (e) { }
+    }, 1500);
+}
+function newSeries(d) {
+    const s = {
         isSeries: true, key: 's' + d.series_slug, series_slug: d.series_slug, title: d.title, infoName: d.infoName || '',
         thumbnail: d.thumbnail, story: d.story || '', episodes: [], countReady: false, loading: false, loadPromise: null,
         badgeEl: null, cached: cachedCount(d.series_slug), completing: false, gapsDone: false, phase: ''
-      };
-      const c = epsCache[d.series_slug];
-      if (c && c.e) addEpisodes(s, c.e.map(a => ({ realid: a[0], title: a[1], meta: { number: a[2] }, season_info: { name: a[3] }, movie_season: a[3], series_slug: d.series_slug })));
-      s.cached = Math.max(s.cached || 0, s.episodes.length);
-      seriesMap.set(d.series_slug, s);
-      return s;
-    }
-    function newMovie(key, d) {
-      const m = { isSeries: false, key, title: d.title, thumbnail: d.thumbnail, realid: d.realid, story: d.story || '' };
-      movieMap.set(key, m);
-      return m;
-    }
-    function itemFromPost(post) {
-      if (post.series_slug) {
+    };
+    const c = epsCache[d.series_slug];
+    if (c && c.e)
+        addEpisodes(s, c.e.map(a => ({ realid: a[0], title: a[1], meta: { number: a[2] }, season_info: { name: a[3] }, movie_season: a[3], series_slug: d.series_slug })));
+    s.cached = Math.max(s.cached || 0, s.episodes.length);
+    seriesMap.set(d.series_slug, s);
+    return s;
+}
+function newMovie(key, d) {
+    const m = { isSeries: false, key, title: d.title, thumbnail: d.thumbnail, realid: d.realid, story: d.story || '' };
+    movieMap.set(key, m);
+    return m;
+}
+function itemFromPost(post) {
+    var _a, _b, _c, _d, _e, _f;
+    if (post.series_slug) {
         const s = seriesMap.get(post.series_slug) || newSeries({
-          series_slug: post.series_slug, title: post.series_info?.name || post.movie_season || post.title,
-          infoName: post.series_info?.name || '', thumbnail: post.thumbnail, story: post.meta?.story || ''
+            series_slug: post.series_slug, title: ((_a = post.series_info) === null || _a === void 0 ? void 0 : _a.name) || post.movie_season || post.title,
+            infoName: ((_b = post.series_info) === null || _b === void 0 ? void 0 : _b.name) || '', thumbnail: post.thumbnail, story: ((_c = post.meta) === null || _c === void 0 ? void 0 : _c.story) || ''
         });
         addEpisodes(s, [post]);
         return s;
-      }
-      const key = 'm' + (post.realid ?? post.slug ?? post.title);
-      return movieMap.get(key) || newMovie(key, { title: post.title, thumbnail: post.thumbnail, realid: post.realid, story: post.meta?.story || '' });
     }
-    function itemFromEntry(e) {
-      if (e.s) return seriesMap.get(e.s) || newSeries({ series_slug: e.s, title: e.t, infoName: e.i, thumbnail: e.th, story: e.st });
-      return movieMap.get(e.k) || newMovie(e.k, { title: e.t, thumbnail: e.th, realid: e.r, story: e.st });
-    }
-
-    // ===== عرض البوسترات =====
-    let rendered = [];
-    const countObserver = 'IntersectionObserver' in window ? new IntersectionObserver(es => {
-      es.forEach(en => {
-        if (!en.isIntersecting) return;
+    const key = 'm' + ((_e = (_d = post.realid) !== null && _d !== void 0 ? _d : post.slug) !== null && _e !== void 0 ? _e : post.title);
+    return movieMap.get(key) || newMovie(key, { title: post.title, thumbnail: post.thumbnail, realid: post.realid, story: ((_f = post.meta) === null || _f === void 0 ? void 0 : _f.story) || '' });
+}
+function itemFromEntry(e) {
+    if (e.s)
+        return seriesMap.get(e.s) || newSeries({ series_slug: e.s, title: e.t, infoName: e.i, thumbnail: e.th, story: e.st });
+    return movieMap.get(e.k) || newMovie(e.k, { title: e.t, thumbnail: e.th, realid: e.r, story: e.st });
+}
+let rendered = [];
+const countObserver = 'IntersectionObserver' in window ? new IntersectionObserver(es => {
+    es.forEach(en => {
+        if (!en.isIntersecting)
+            return;
         countObserver.unobserve(en.target);
         const it = en.target._item;
-        if (it && it.isSeries && !it.loadPromise && !it.cached) pending.push(it);
-      });
-      pump();
-    }, { rootMargin: '300px' }) : null;
-
-    function clearGrid() {
-      rendered = [];
-      if (countObserver) countObserver.disconnect();
-      document.getElementById('movieGrid').innerHTML = '';
-    }
-
-    function renderCards(items) {
-      const frag = document.createDocumentFragment();
-      items.forEach(item => {
+        if (it && it.isSeries && !it.loadPromise && !it.cached)
+            pending.push(it);
+    });
+    pump();
+}, { rootMargin: '300px' }) : null;
+function clearGrid() {
+    rendered = [];
+    if (countObserver)
+        countObserver.disconnect();
+    document.getElementById('movieGrid').innerHTML = '';
+}
+function renderCards(items) {
+    const frag = document.createDocumentFragment();
+    items.forEach(item => {
         const card = document.createElement('div');
         card.className = 'card';
         card.tabIndex = 0;
         const open = item.isSeries ? () => openSeriesModal(item) : () => playMovie(item.realid, item.title, null, item);
         card.onclick = open;
-        card.addEventListener('keydown', (e) => { if (e.key === 'Enter') open(); });
+        card._item = item;
         card.innerHTML = `<div class="poster-wrap"><img src="${esc(item.thumbnail)}" alt="${esc(item.title)}" loading="lazy" decoding="async" /></div><h3>${esc(item.title)}</h3>`;
         if (item.isSeries) {
-          const badge = document.createElement('span');
-          badge.className = 'ep-badge';
-          badge.textContent = badgeText(item);
-          item.badgeEl = badge;
-          card._item = item;
-          card.querySelector('.poster-wrap').appendChild(badge);
-          if (countObserver) countObserver.observe(card); else pending.push(item);
+            const badge = document.createElement('span');
+            badge.className = 'ep-badge';
+            badge.textContent = badgeText(item);
+            item.badgeEl = badge;
+            card.querySelector('.poster-wrap').appendChild(badge);
+            if (countObserver)
+                countObserver.observe(card);
+            else
+                pending.push(item);
         }
         const fb = document.createElement('button');
         fb.className = 'fav-btn' + (isFav(item) ? ' on' : '');
         fb.dataset.key = item.key;
         fb.tabIndex = -1;
         fb.setAttribute('aria-label', 'المفضلة');
-        fb.innerHTML = ICON.heart;
+        fb.textContent = '\u2665';
         fb.onclick = (ev) => { ev.stopPropagation(); fb.blur(); toggleFav(item); };
         card.querySelector('.poster-wrap').appendChild(fb);
         frag.appendChild(card);
         rendered.push(item.key);
-      });
-      document.getElementById('movieGrid').appendChild(frag);
-      if (!countObserver) pump();
-    }
-
-    // يضيف الجديد فقط إذا بقي الترتيب كما هو، وإلا يعيد البناء
-    function syncGrid(items) {
-      let same = rendered.length <= items.length;
-      for (let i = 0; i < rendered.length && same; i++) if (rendered[i] !== items[i].key) same = false;
-      if (!same || !rendered.length) clearGrid();
-      const add = items.slice(rendered.length);
-      if (add.length) renderCards(add);
-    }
-
-    function updateMoreBtn() {
-      const show = searchMode ? (sq.pool.size > 0 && (sq.pool.size > sq.limit || sq.hasMore)) : (hasMore && shownKeys.size > 0);
-      const busy = searchMode ? sq.busy : loadingMore;
-      document.getElementById('moreWrap').style.display = show ? 'flex' : 'none';
-      document.getElementById('moreBtn').disabled = busy;
-      document.getElementById('moreLabel').textContent = busy ? 'جاري التحميل...' : 'المزيد';
-    }
-
-    // ===== القائمة العادية (الرئيسية / التصنيفات) =====
-    function pageUrl(page) {
-      return currentCategory ? `${API}?action=posts&category=${currentCategory}&page=${page}` : `${API}?action=posts&page=${page}`;
-    }
-
-    function addPosts(posts) {
-      const newItems = [];
-      let unseen = 0;
-      posts.forEach(post => {
-        const pid = post.realid ?? post.slug ?? post.title;
-        if (seenPostIds.has(pid)) return;
+    });
+    document.getElementById('movieGrid').appendChild(frag);
+    if (!countObserver)
+        pump();
+}
+function syncGrid(items) {
+    let same = rendered.length <= items.length;
+    for (let i = 0; i < rendered.length && same; i++)
+        if (rendered[i] !== items[i].key)
+            same = false;
+    if (!same || !rendered.length)
+        clearGrid();
+    const add = items.slice(rendered.length);
+    if (add.length)
+        renderCards(add);
+}
+function updateMoreBtn() {
+    const show = searchMode ? (sq.pool.size > 0 && (sq.pool.size > sq.limit || sq.hasMore)) : (hasMore && shownKeys.size > 0);
+    const busy = searchMode ? sq.busy : loadingMore;
+    document.getElementById('moreWrap').style.display = show ? 'flex' : 'none';
+    document.getElementById('moreBtn').disabled = busy;
+    document.getElementById('moreLabel').textContent = busy ? 'جاري التحميل...' : 'المزيد';
+}
+function pageUrl(page) {
+    return currentCategory ? `${API}?action=posts&category=${currentCategory}&page=${page}` : `${API}?action=posts&page=${page}`;
+}
+function addPosts(posts) {
+    const newItems = [];
+    let unseen = 0;
+    posts.forEach(post => {
+        var _a, _b;
+        const pid = (_b = (_a = post.realid) !== null && _a !== void 0 ? _a : post.slug) !== null && _b !== void 0 ? _b : post.title;
+        if (seenPostIds.has(pid))
+            return;
         seenPostIds.add(pid);
         unseen++;
         const item = itemFromPost(post);
         indexItem(item);
-        if (!shownKeys.has(item.key)) { shownKeys.add(item.key); newItems.push(item); }
-      });
-      return { newItems, unseen };
-    }
-
-    async function loadMore(reset = false) {
-      if (favMode && !searchMode) { if (reset) showFavs(); return; }
-      if (searchMode && !reset) return searchMore();
-      if (loadingMore && !reset) return;
-      const token = reset ? ++listToken : listToken;
-      const grid = document.getElementById('movieGrid');
-
-      if (reset) {
-        currentPage = 1;
-        hasMore = true;
-        pending.length = 0;
-        shownKeys.clear();
-        seenPostIds.clear();
-        clearGrid();
-        grid.innerHTML = '<p class="muted">جاري التحميل...</p>';
-      }
-      loadingMore = true;
-      updateMoreBtn();
-
-      const target = isMobile() ? 9 : 14;
-      let added = 0, fetches = 0, stalls = 0, failed = false;
-      let firstRender = reset;
-
-      try {
-        while (added < target && hasMore && fetches < 8) {
-          const data = await fetchJSON(pageUrl(currentPage));
-          if (token !== listToken) return;
-          fetches++;
-
-          const posts = data?.posts || [];
-          if (!posts.length) { hasMore = false; break; }
-          currentPage++;
-
-          const { newItems, unseen } = addPosts(posts);
-          if (unseen === 0) { if (++stalls >= 2) { hasMore = false; break; } continue; }
-          stalls = 0;
-
-          if (firstRender) { grid.innerHTML = ''; firstRender = false; }
-          renderCards(newItems);
-          added += newItems.length;
+        if (!shownKeys.has(item.key)) {
+            shownKeys.add(item.key);
+            newItems.push(item);
         }
-      } catch (e) { console.error(e); failed = true; }
-
-      if (token !== listToken) return;
-      loadingMore = false;
-      if (shownKeys.size === 0) {
-        grid.innerHTML = failed ? '<p class="muted">حدث خطأ أثناء تحميل البيانات.</p>' : '<p class="muted">لا توجد نتائج لعرضها.</p>';
-      }
-      updateMoreBtn();
-    }
-
-    // ===== البحث اللحظي =====
-    let searchMode = false, searchDebounce, syncRaf = 0;
-    const sq = { id: 0, ctrl: null, timer: 0, q: '', qn: '', qp: '', variants: [], page: 1, hasMore: false, busy: false, waiting: false, limit: 18, pool: new Map(), pendingReqs: 0 };
-    const sCache = new Map();
-    const sInput = document.getElementById('searchInput');
-    const STEP = () => isMobile() ? 18 : 24;
-
-    async function getSearch(v, page, signal) {
-      const k = v + '|' + page;
-      if (sCache.has(k)) return sCache.get(k);
-      const r = await fetch(`${API}?action=search&search=${encodeURIComponent(v)}&page=${page}`, { signal });
-      const d = await r.json();
-      sCache.set(k, d);
-      if (sCache.size > 80) sCache.delete(sCache.keys().next().value);
-      return d;
-    }
-
-    function poolAdd(item, sc) {
-      const cur = sq.pool.get(item.key);
-      if (!cur || sc > cur.sc) sq.pool.set(item.key, { item, sc });
-    }
-    const sortedPool = () => [...sq.pool.values()].sort((a, b) => b.sc - a.sc || a.item.title.length - b.item.title.length);
-
-    function scheduleSync() {
-      if (syncRaf) return;
-      syncRaf = requestAnimationFrame(() => { syncRaf = 0; renderSearch(); });
-    }
-
-    function renderSearch() {
-      if (!searchMode) return;
-      const all = sortedPool();
-      syncGrid(all.slice(0, sq.limit).map(x => x.item));
-      if (!all.length) {
-        document.getElementById('movieGrid').innerHTML = `<p class="muted">${(sq.pendingReqs > 0 || sq.waiting) ? 'جاري البحث...' : 'لا توجد نتائج لعرضها.'}</p>`;
-      }
-      updateMoreBtn();
-    }
-
-    async function fetchSearchPage(id, page) {
-      const vs = sq.variants;
-      let any = false;
-      sq.waiting = false;
-      sq.pendingReqs += vs.length;
-      await Promise.all(vs.map(async (v, vi) => {
+    });
+    return { newItems, unseen };
+}
+function loadMore() {
+    return __awaiter(this, arguments, void 0, function* (reset = false) {
+        if (favMode && !searchMode) {
+            if (reset)
+                showFavs();
+            return;
+        }
+        if (searchMode && !reset)
+            return searchMore();
+        if (loadingMore && !reset)
+            return;
+        const token = reset ? ++listToken : listToken;
+        const grid = document.getElementById('movieGrid');
+        if (reset) {
+            currentPage = 1;
+            hasMore = true;
+            pending.length = 0;
+            shownKeys.clear();
+            seenPostIds.clear();
+            clearGrid();
+            grid.innerHTML = '<p class="muted">جاري التحميل...</p>';
+        }
+        loadingMore = true;
+        updateMoreBtn();
+        const target = isMobile() ? 9 : 14;
+        let added = 0, fetches = 0, stalls = 0, failed = false;
+        let firstRender = reset;
         try {
-          const data = await getSearch(v, page, sq.ctrl.signal);
-          if (id !== sq.id) return;
-          const posts = data?.posts || [];
-          if (posts.length) any = true;
-          posts.forEach((p, pi) => {
-            const item = itemFromPost(p);
-            indexItem(item);
-            poolAdd(item, scoreOf(item, sq.qn, sq.qp) || (100 - Math.min(vi * 10 + pi, 90)));
-          });
-        } catch (e) { /* إلغاء أو خطأ شبكة */ }
-        finally { if (id === sq.id) { sq.pendingReqs--; scheduleSync(); } }
-      }));
-      if (id === sq.id && page === sq.page) sq.hasMore = any;
+            while (added < target && hasMore && fetches < 8) {
+                const data = yield fetchJSON(pageUrl(currentPage));
+                if (token !== listToken)
+                    return;
+                fetches++;
+                const posts = (data === null || data === void 0 ? void 0 : data.posts) || [];
+                if (!posts.length) {
+                    hasMore = false;
+                    break;
+                }
+                currentPage++;
+                const { newItems, unseen } = addPosts(posts);
+                if (unseen === 0) {
+                    if (++stalls >= 2) {
+                        hasMore = false;
+                        break;
+                    }
+                    continue;
+                }
+                stalls = 0;
+                if (firstRender) {
+                    grid.innerHTML = '';
+                    firstRender = false;
+                }
+                renderCards(newItems);
+                added += newItems.length;
+            }
+        }
+        catch (e) {
+            console.error(e);
+            failed = true;
+        }
+        if (token !== listToken)
+            return;
+        loadingMore = false;
+        if (shownKeys.size === 0) {
+            grid.innerHTML = failed ? '<p class="muted">حدث خطأ أثناء تحميل البيانات.</p>' : '<p class="muted">لا توجد نتائج لعرضها.</p>';
+        }
+        updateMoreBtn();
+    });
+}
+let searchMode = false, searchDebounce, syncRaf = 0;
+const sq = { id: 0, ctrl: null, timer: 0, q: '', qn: '', qp: '', variants: [], page: 1, hasMore: false, busy: false, waiting: false, limit: 18, pool: new Map(), pendingReqs: 0 };
+const sCache = new Map();
+const sInput = document.getElementById('searchInput');
+const STEP = () => isMobile() ? 18 : 24;
+function getSearch(v, page, signal) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const k = v + '|' + page;
+        if (sCache.has(k))
+            return sCache.get(k);
+        const r = yield fetch(`${API}?action=search&search=${encodeURIComponent(v)}&page=${page}`, { signal });
+        const d = yield r.json();
+        sCache.set(k, d);
+        if (sCache.size > 80)
+            sCache.delete(sCache.keys().next().value);
+        return d;
+    });
+}
+function poolAdd(item, sc) {
+    const cur = sq.pool.get(item.key);
+    if (!cur || sc > cur.sc)
+        sq.pool.set(item.key, { item, sc });
+}
+const sortedPool = () => [...sq.pool.values()].sort((a, b) => b.sc - a.sc || a.item.title.length - b.item.title.length);
+function scheduleSync() {
+    if (syncRaf)
+        return;
+    syncRaf = requestAnimationFrame(() => { syncRaf = 0; renderSearch(); });
+}
+function renderSearch() {
+    if (!searchMode)
+        return;
+    const all = sortedPool();
+    syncGrid(all.slice(0, sq.limit).map(x => x.item));
+    if (!all.length) {
+        document.getElementById('movieGrid').innerHTML = `<p class="muted">${(sq.pendingReqs > 0 || sq.waiting) ? 'جاري البحث...' : 'لا توجد نتائج لعرضها.'}</p>`;
     }
-
-    function runSearch(q, delay = 160) {
-      if (favMode) {
-        favMode = false; currentCategory = '';
+    updateMoreBtn();
+}
+function fetchSearchPage(id, page) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const vs = sq.variants;
+        let any = false;
+        sq.waiting = false;
+        sq.pendingReqs += vs.length;
+        yield Promise.all(vs.map((v, vi) => __awaiter(this, void 0, void 0, function* () {
+            try {
+                const data = yield getSearch(v, page, sq.ctrl.signal);
+                if (id !== sq.id)
+                    return;
+                const posts = (data === null || data === void 0 ? void 0 : data.posts) || [];
+                if (posts.length)
+                    any = true;
+                posts.forEach((p, pi) => {
+                    const item = itemFromPost(p);
+                    indexItem(item);
+                    poolAdd(item, scoreOf(item, sq.qn, sq.qp) || (100 - Math.min(vi * 10 + pi, 90)));
+                });
+            }
+            catch (e) { }
+            finally {
+                if (id === sq.id) {
+                    sq.pendingReqs--;
+                    scheduleSync();
+                }
+            }
+        })));
+        if (id === sq.id && page === sq.page)
+            sq.hasMore = any;
+    });
+}
+function runSearch(q, delay = 160) {
+    if (favMode) {
+        favMode = false;
+        currentCategory = '';
         document.querySelectorAll('.cat-btn').forEach((b, i) => b.classList.toggle('active', i === 0));
-      }
-      const id = ++sq.id;
-      if (sq.ctrl) sq.ctrl.abort();
-      clearTimeout(sq.timer);
-      sq.ctrl = new AbortController();
-      Object.assign(sq, { q, qn: normText(q), qp: skel(q), page: 1, hasMore: false, busy: false, waiting: false, limit: STEP(), pool: new Map(), pendingReqs: 0 });
-      searchMode = true;
-      loadingMore = false;
-      listToken++;
-      pending.length = 0;
-
-      // 1) نتائج فورية من الفهرس المحلي
-      const hits = [];
-      idx.forEach(e => { const sc = scoreOf(e, sq.qn, sq.qp); if (sc) hits.push([sc, e]); });
-      hits.sort((a, b) => b[0] - a[0]).slice(0, 80).forEach(([sc, e]) => poolAdd(itemFromEntry(e), sc));
-
-      // 2) السيرفر بعد توقف قصير عن الكتابة
-      if (sq.qn.length >= 2) {
+    }
+    const id = ++sq.id;
+    if (sq.ctrl)
+        sq.ctrl.abort();
+    clearTimeout(sq.timer);
+    sq.ctrl = new AbortController();
+    Object.assign(sq, { q, qn: normText(q), qp: skel(q), page: 1, hasMore: false, busy: false, waiting: false, limit: STEP(), pool: new Map(), pendingReqs: 0 });
+    searchMode = true;
+    loadingMore = false;
+    listToken++;
+    pending.length = 0;
+    const hits = [];
+    idx.forEach(e => { const sc = scoreOf(e, sq.qn, sq.qp); if (sc)
+        hits.push([sc, e]); });
+    hits.sort((a, b) => b[0] - a[0]).slice(0, 80).forEach(([sc, e]) => poolAdd(itemFromEntry(e), sc));
+    if (sq.qn.length >= 2) {
         sq.variants = buildVariants(q);
         sq.waiting = true;
         sq.timer = setTimeout(() => fetchSearchPage(id, 1), delay);
-      }
-      renderSearch();
     }
-
-    async function searchMore() {
-      if (sq.busy) return;
-      if (sq.pool.size > sq.limit) { sq.limit += STEP(); renderSearch(); return; }
-      if (!sq.hasMore) return;
-      sq.busy = true;
-      updateMoreBtn();
-      const id = sq.id;
-      sq.page++;
-      await fetchSearchPage(id, sq.page);
-      if (id !== sq.id) return;
-      sq.limit += STEP();
-      sq.busy = false;
-      renderSearch();
-    }
-
-    function leaveSearch() {
-      if (!searchMode) return;
-      searchMode = false;
-      sq.id++;
-      clearTimeout(sq.timer);
-      if (sq.ctrl) sq.ctrl.abort();
-      sq.pool = new Map();
-      loadMore(true);
-    }
-
-    sInput.addEventListener('input', () => {
-      clearTimeout(searchDebounce);
-      const v = sInput.value.trim();
-      if (!v) { leaveSearch(); return; }
-      runSearch(v);
+    renderSearch();
+}
+function searchMore() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (sq.busy)
+            return;
+        if (sq.pool.size > sq.limit) {
+            sq.limit += STEP();
+            renderSearch();
+            return;
+        }
+        if (!sq.hasMore)
+            return;
+        sq.busy = true;
+        updateMoreBtn();
+        const id = sq.id;
+        sq.page++;
+        yield fetchSearchPage(id, sq.page);
+        if (id !== sq.id)
+            return;
+        sq.limit += STEP();
+        sq.busy = false;
+        renderSearch();
     });
-
-    // ===== Series Modal (المواسم والحلقات) =====
-    const seriesModal = document.getElementById('seriesModal');
-    const gid = id => document.getElementById(id);
-
-    // الحلقات المشاهَدة
-    const SEEN_KEY = 'alm_seen_v1';
-    let watched = new Set(), seenT;
-    try { watched = new Set((JSON.parse(localStorage.getItem(SEEN_KEY) || '[]')).map(String)); } catch (e) {}
-    function markSeen(id) {
-      if (id == null || watched.has(String(id))) return;
-      watched.add(String(id));
-      clearTimeout(seenT);
-      seenT = setTimeout(() => { try { localStorage.setItem(SEEN_KEY, JSON.stringify([...watched].slice(-4000))); } catch (e) {} }, 800);
+}
+function leaveSearch() {
+    if (!searchMode)
+        return;
+    searchMode = false;
+    sq.id++;
+    clearTimeout(sq.timer);
+    if (sq.ctrl)
+        sq.ctrl.abort();
+    sq.pool = new Map();
+    loadMore(true);
+}
+sInput.addEventListener('input', () => {
+    clearTimeout(searchDebounce);
+    const v = sInput.value.trim();
+    if (!v) {
+        leaveSearch();
+        return;
     }
-
-    function allSorted(s) {
-      return s.episodes.slice().sort((a, b) =>
-        seasonOrder(seasonNameOf(a)) - seasonOrder(seasonNameOf(b)) || seasonNameOf(a).localeCompare(seasonNameOf(b), 'ar') || episodeNumber(a) - episodeNumber(b));
+    runSearch(v);
+});
+const seriesModal = document.getElementById('seriesModal');
+const gid = id => document.getElementById(id);
+const SEEN_KEY = 'alm_seen_v1';
+let watched = new Set(), seenT;
+try {
+    watched = new Set((JSON.parse(localStorage.getItem(SEEN_KEY) || '[]')).map(String));
+}
+catch (e) { }
+function markSeen(id) {
+    if (id == null || watched.has(String(id)))
+        return;
+    watched.add(String(id));
+    clearTimeout(seenT);
+    seenT = setTimeout(() => { try {
+        localStorage.setItem(SEEN_KEY, JSON.stringify([...watched].slice(-4000)));
     }
-    function resumeTarget(s) {
-      const all = allSorted(s);
-      if (!all.length) return null;
-      let last = -1;
-      all.forEach((e, i) => { if (watched.has(String(e.realid))) last = i; });
-      if (last < 0) return { ep: all[0], resume: false };
-      return { ep: all[last + 1] || all[0], resume: true };
-    }
-
-    function groupSeasons(series) {
-      const seasons = {};
-      series.episodes.forEach(ep => {
+    catch (e) { } }, 800);
+}
+function allSorted(s) {
+    return s.episodes.slice().sort((a, b) => seasonOrder(seasonNameOf(a)) - seasonOrder(seasonNameOf(b)) || seasonNameOf(a).localeCompare(seasonNameOf(b), 'ar') || episodeNumber(a) - episodeNumber(b));
+}
+function resumeTarget(s) {
+    const all = allSorted(s);
+    if (!all.length)
+        return null;
+    let last = -1;
+    all.forEach((e, i) => { if (watched.has(String(e.realid)))
+        last = i; });
+    if (last < 0)
+        return { ep: all[0], resume: false };
+    return { ep: all[last + 1] || all[0], resume: true };
+}
+function groupSeasons(series) {
+    const seasons = {};
+    series.episodes.forEach(ep => {
         const name = seasonNameOf(ep);
         (seasons[name] = seasons[name] || []).push(ep);
-      });
-      return seasons;
+    });
+    return seasons;
+}
+function syncModalButtons() {
+    const s = activeSeries;
+    if (!s)
+        return;
+    const fav = isFav(s);
+    const fb = gid('smFav');
+    fb.classList.toggle('on', fav);
+    fb.querySelector('span').textContent = fav ? 'في المفضلة' : 'المفضلة';
+    gid('smFavIc').innerHTML = fav ? ICON.heartOn : ICON.heart;
+    const rb = gid('smRefresh');
+    rb.classList.toggle('spin', !!s.loading);
+    rb.disabled = !!s.loading;
+    const t = resumeTarget(s);
+    const lbl = gid('smPlayLbl');
+    if (!t)
+        lbl.textContent = 'تشغيل';
+    else {
+        const n = episodeNumber(t.ep);
+        lbl.textContent = (t.resume ? 'متابعة' : 'تشغيل') + (n === 9999 ? '' : ` · حلقة ${n}`);
     }
-
-    function syncModalButtons() {
-      const s = activeSeries;
-      if (!s) return;
-      const fav = isFav(s);
-      const fb = gid('smFav');
-      fb.classList.toggle('on', fav);
-      fb.querySelector('span').textContent = fav ? 'في المفضلة' : 'المفضلة';
-      gid('smFavIc').innerHTML = fav ? ICON.heartOn : ICON.heart;
-      const rb = gid('smRefresh');
-      rb.classList.toggle('spin', !!s.loading);
-      rb.disabled = !!s.loading;
-      const t = resumeTarget(s);
-      const lbl = gid('smPlayLbl');
-      if (!t) lbl.textContent = 'تشغيل';
-      else { const n = episodeNumber(t.ep); lbl.textContent = (t.resume ? 'متابعة' : 'تشغيل') + (n === 9999 ? '' : ` · حلقة ${n}`); }
-      gid('smPlay').disabled = !t;
-    }
-
-    function updateLoadStatus() {
-      const st = gid('loadStatus');
-      const s = activeSeries;
-      if (!s) return;
-      if (s.loading) {
+    gid('smPlay').disabled = !t;
+}
+function updateLoadStatus() {
+    const st = gid('loadStatus');
+    const s = activeSeries;
+    if (!s)
+        return;
+    if (s.loading) {
         st.className = 'sm-status show';
         st.innerHTML = '<span class="dot"></span><span>' + (s.phase === 'gaps' ? 'جاري البحث عن الحلقات الناقصة…' : 'جاري تحميل باقي الحلقات…') + '</span>';
-      } else {
+    }
+    else {
         const miss = gapsOf(s).length;
-        if (miss) { st.className = 'sm-status show warn'; st.textContent = `تنقص ${miss} حلقة — اضغط «جلب الحلقات» أو اضغط على الحلقة المنقطة للبحث عنها.`; }
-        else st.className = 'sm-status';
-      }
-      syncModalButtons();
+        if (miss) {
+            st.className = 'sm-status show warn';
+            st.textContent = `تنقص ${miss} حلقة — اضغط «جلب الحلقات» أو اضغط على الحلقة المنقطة للبحث عنها.`;
+        }
+        else
+            st.className = 'sm-status';
     }
-    function flashStatus(msg) {
-      const st = gid('loadStatus');
-      st.className = 'sm-status show warn';
-      st.textContent = msg;
-      setTimeout(() => { if (activeSeries) updateLoadStatus(); }, 2600);
-    }
-
-    async function fetchMissingOne(series, season, n, btn) {
-      if (series.loading || btn.dataset.busy) return;
-      btn.dataset.busy = '1';
-      btn.querySelector('i').textContent = '…';
-      const multi = Object.keys(groupSeasons(series)).length > 1;
-      const ok = await findEpisode(series, season, n, multi);
-      if (series.episodes.length) saveEpisodes(series);
-      progress(series);
-      if (!ok && activeSeries === series) flashStatus(`الحلقة ${n} غير متوفرة حالياً في المصدر.`);
-    }
-
-    function openSeriesModal(series) {
-      activeSeries = series;
-      activeSeasonName = null;
-
-      gid('seriesPoster').src = series.thumbnail;
-      gid('smBg').style.backgroundImage = 'url("' + String(series.thumbnail || '').replace(/"/g, '%22') + '")';
-      gid('seriesTitle').innerText = series.title;
-      gid('seriesStory').innerText = series.story || 'لا يوجد وصف متاح.';
-
-      seriesModal.classList.add('show');
-      document.body.style.overflow = 'hidden';
-      completeSeries(series);
-      updateBadge(series);
-      renderSeries();
-      gid('episodesGrid').scrollTop = 0;
-      updateLoadStatus();
-      setTimeout(() => { const b = gid('smPlay'); if (b && !b.disabled) b.focus(); }, 80);
-    }
-
-    function renderSeries() {
-      const series = activeSeries;
-      if (!series) return;
-
-      const seasons = groupSeasons(series);
-      const names = Object.keys(seasons).sort((a, b) => seasonOrder(a) - seasonOrder(b) || a.localeCompare(b, 'ar'));
-      const tabs = gid('seasonTabs');
-      const grid = gid('episodesGrid');
-
-      const total = series.episodes.length;
-      gid('seriesCount').textContent = total ? `${total} حلقة${series.loading ? '…' : ''}` : (series.loading ? 'جاري التحميل…' : 'لا توجد حلقات');
-      gid('seasonCount').textContent = names.length > 1 ? `${names.length} مواسم` : '';
-      syncModalButtons();
-
-      // حفظ التركيز الحالي (للريموت)
-      const ae = document.activeElement;
-      const focusedTab = ae && ae.classList && ae.classList.contains('season-tab') ? ae.dataset.name : null;
-      const focusedEp = ae && ae.classList && ae.classList.contains('episode-btn') ? ae.dataset.id : null;
-
-      tabs.innerHTML = '';
-      if (names.length === 0) {
-        if (!series.loading) tabs.innerHTML = '<span style="color:#aaa;font-size:.85rem;">لا توجد حلقات متاحة.</span>';
+    syncModalButtons();
+}
+function flashStatus(msg) {
+    const st = gid('loadStatus');
+    st.className = 'sm-status show warn';
+    st.textContent = msg;
+    setTimeout(() => { if (activeSeries)
+        updateLoadStatus(); }, 2600);
+}
+function fetchMissingOne(series, season, n, btn) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (series.loading || btn.dataset.busy)
+            return;
+        btn.dataset.busy = '1';
+        btn.querySelector('i').textContent = '…';
+        const multi = Object.keys(groupSeasons(series)).length > 1;
+        const ok = yield findEpisode(series, season, n, multi);
+        if (series.episodes.length)
+            saveEpisodes(series);
+        progress(series);
+        if (!ok && activeSeries === series)
+            flashStatus(`الحلقة ${n} غير متوفرة حالياً في المصدر.`);
+    });
+}
+function openSeriesModal(series) {
+    activeSeries = series;
+    activeSeasonName = null;
+    gid('seriesPoster').src = series.thumbnail;
+    gid('smBg').style.backgroundImage = 'url("' + String(series.thumbnail || '').replace(/"/g, '%22') + '")';
+    gid('seriesTitle').innerText = series.title;
+    gid('seriesStory').innerText = series.story || 'لا يوجد وصف متاح.';
+    seriesModal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+    layerOpened();
+    completeSeries(series);
+    updateBadge(series);
+    renderSeries();
+    gid('episodesGrid').scrollTop = 0;
+    updateLoadStatus();
+    setTimeout(() => { const b = gid('smPlay'); if (b && !b.disabled)
+        b.focus(); }, 80);
+}
+function renderSeries() {
+    const series = activeSeries;
+    if (!series)
+        return;
+    const seasons = groupSeasons(series);
+    const names = Object.keys(seasons).sort((a, b) => seasonOrder(a) - seasonOrder(b) || a.localeCompare(b, 'ar'));
+    const tabs = gid('seasonTabs');
+    const grid = gid('episodesGrid');
+    const total = series.episodes.length;
+    gid('seriesCount').textContent = total ? `${total} حلقة${series.loading ? '…' : ''}` : (series.loading ? 'جاري التحميل…' : 'لا توجد حلقات');
+    gid('seasonCount').textContent = names.length > 1 ? `${names.length} مواسم` : '';
+    syncModalButtons();
+    const ae = document.activeElement;
+    const focusedTab = ae && ae.classList && ae.classList.contains('season-tab') ? ae.dataset.name : null;
+    const focusedEp = ae && ae.classList && ae.classList.contains('episode-btn') ? ae.dataset.id : null;
+    tabs.innerHTML = '';
+    if (names.length === 0) {
+        if (!series.loading)
+            tabs.innerHTML = '<span style="color:#aaa;font-size:.85rem;">لا توجد حلقات متاحة.</span>';
         grid.innerHTML = '';
         return;
-      }
-
-      if (!activeSeasonName || !seasons[activeSeasonName]) activeSeasonName = names[0];
-
-      names.forEach(name => {
+    }
+    if (!activeSeasonName || !seasons[activeSeasonName])
+        activeSeasonName = names[0];
+    names.forEach(name => {
         const btn = document.createElement('button');
         btn.className = 'season-tab' + (name === activeSeasonName ? ' active' : '');
         btn.dataset.name = name;
@@ -1334,376 +1582,543 @@
         btn.innerHTML = names.length > 1 ? `${esc(name)}<small>${seasons[name].length}</small>` : esc(name);
         btn.onclick = () => { activeSeasonName = name; renderSeries(); grid.scrollTop = 0; };
         tabs.appendChild(btn);
-      });
-
-      const items = seasons[activeSeasonName].map(ep => ({ n: episodeNumber(ep), ep }));
-      if (!series.loading) {
+    });
+    const items = seasons[activeSeasonName].map(ep => ({ n: episodeNumber(ep), ep }));
+    if (!series.loading) {
         gapsOf(series).filter(g => g.season === activeSeasonName).forEach(g => items.push({ n: g.n, miss: true }));
-      }
-      items.sort((a, b) => a.n - b.n);
-
-      const target = resumeTarget(series);
-      const nextId = target && target.resume ? target.ep.realid : null;
-      const scroll = grid.scrollTop;
-      grid.innerHTML = '';
-      items.forEach(it => {
+    }
+    items.sort((a, b) => a.n - b.n);
+    const target = resumeTarget(series);
+    const nextId = target && target.resume ? target.ep.realid : null;
+    const scroll = grid.scrollTop;
+    grid.innerHTML = '';
+    items.forEach(it => {
         const btn = document.createElement('button');
         btn.tabIndex = 0;
         if (it.miss) {
-          btn.className = 'episode-btn miss';
-          btn.title = 'حلقة غير محمّلة — اضغط للبحث عنها';
-          btn.innerHTML = `<b>${it.n}</b><i>بحث</i>`;
-          btn.onclick = () => fetchMissingOne(series, activeSeasonName, it.n, btn);
-        } else {
-          const ep = it.ep;
-          btn.className = 'episode-btn' + (watched.has(String(ep.realid)) ? ' seen' : '') + (ep.realid === nextId ? ' next' : '');
-          btn.dataset.id = ep.realid;
-          btn.innerHTML = `<b>${it.n === 9999 ? '?' : it.n}</b><i>حلقة</i>`;
-          const go = () => { closeSeriesModal(); playMovie(ep.realid, ep.title, series); };
-          btn.onclick = go;
-          btn.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); go(); } });
+            btn.className = 'episode-btn miss';
+            btn.title = 'حلقة غير محمّلة — اضغط للبحث عنها';
+            btn.innerHTML = `<b>${it.n}</b><i>بحث</i>`;
+            btn.onclick = () => fetchMissingOne(series, activeSeasonName, it.n, btn);
+        }
+        else {
+            const ep = it.ep;
+            btn.className = 'episode-btn' + (watched.has(String(ep.realid)) ? ' seen' : '') + (ep.realid === nextId ? ' next' : '');
+            btn.dataset.id = ep.realid;
+            btn.innerHTML = `<b>${it.n === 9999 ? '?' : it.n}</b><i>حلقة</i>`;
+            const go = () => { closeSeriesModal(); playMovie(ep.realid, ep.title, series); };
+            btn.onclick = go;
+            btn.addEventListener('keydown', (e) => { if (e.key === 'Enter') {
+                e.preventDefault();
+                go();
+            } });
         }
         grid.appendChild(btn);
-      });
-      grid.scrollTop = scroll;
-
-      // استعادة التركيز
-      if (focusedTab) {
+    });
+    grid.scrollTop = scroll;
+    if (focusedTab) {
         const t = Array.from(tabs.children).find(el => el.dataset.name === focusedTab);
-        if (t) t.focus();
-      } else if (focusedEp) {
+        if (t)
+            t.focus();
+    }
+    else if (focusedEp) {
         const b = Array.from(grid.children).find(el => el.dataset.id === focusedEp);
-        if (b) b.focus();
-      }
+        if (b)
+            b.focus();
     }
-
-    function closeSeriesModal() {
-      activeSeries = null;
-      seriesModal.classList.remove('show');
-      document.body.style.overflow = '';
+}
+function closeSeriesModal(fromPop) {
+    activeSeries = null;
+    seriesModal.classList.remove('show');
+    document.body.style.overflow = '';
+    if (!fromPop)
+        layerClosed();
+}
+gid('smPlay').onclick = () => {
+    const s = activeSeries;
+    const t = s && resumeTarget(s);
+    if (t) {
+        closeSeriesModal();
+        playMovie(t.ep.realid, t.ep.title, s);
     }
-
-    gid('smPlay').onclick = () => {
-      const s = activeSeries;
-      const t = s && resumeTarget(s);
-      if (t) { closeSeriesModal(); playMovie(t.ep.realid, t.ep.title, s); }
-    };
-    gid('smFav').onclick = () => { if (activeSeries) toggleFav(activeSeries); };
-    gid('smRefresh').onclick = () => { if (activeSeries && !activeSeries.loading) completeSeries(activeSeries, true); };
-
-    // ===== المفضلة =====
-    function toggleFav(it) {
-      if (favs.has(it.key)) favs.delete(it.key);
-      else {
+};
+gid('smFav').onclick = () => { if (activeSeries)
+    toggleFav(activeSeries); };
+gid('smRefresh').onclick = () => { if (activeSeries && !activeSeries.loading)
+    completeSeries(activeSeries, true); };
+function toggleFav(it) {
+    if (favs.has(it.key))
+        favs.delete(it.key);
+    else {
         favs.set(it.key, it.isSeries
-          ? { k: it.key, t: it.title, th: it.thumbnail, s: it.series_slug, i: it.infoName, st: String(it.story || '').slice(0, 400) }
-          : { k: it.key, t: it.title, th: it.thumbnail, r: it.realid, st: String(it.story || '').slice(0, 400) });
+            ? { k: it.key, t: it.title, th: it.thumbnail, s: it.series_slug, i: it.infoName, st: String(it.story || '').slice(0, 400) }
+            : { k: it.key, t: it.title, th: it.thumbnail, r: it.realid, st: String(it.story || '').slice(0, 400) });
         indexItem(it);
-      }
-      saveFavs();
-      updateFavCount();
-      syncFavUI(it);
     }
-    function syncFavUI(it) {
-      const on = isFav(it);
-      document.querySelectorAll('.fav-btn').forEach(b => { if (b.dataset.key === it.key) b.classList.toggle('on', on); });
-      if (activeSeries === it) syncModalButtons();
-      if (playerItem === it) syncPlayerFav();
-      if (favMode && !on) showFavs();
-    }
-    function showFavs() {
-      listToken++;
-      hasMore = false; loadingMore = false;
-      pending.length = 0;
-      shownKeys.clear();
-      clearGrid();
-      const items = [...favs.values()].reverse().map(itemFromEntry);
-      const grid = document.getElementById('movieGrid');
-      if (!items.length) grid.innerHTML = '<p class="muted">لا توجد عناصر في المفضلة بعد.<br>اضغط على ♥ في أي فيلم أو مسلسل لإضافته.</p>';
-      else { items.forEach(i => shownKeys.add(i.key)); renderCards(items); }
-      updateMoreBtn();
-    }
+    saveFavs();
     updateFavCount();
-
-    // ===== Player =====
-    const $ = id => document.getElementById(id);
-    const video = $('videoPlayer');
-    const modal = $('playerModal');
-    const stage = $('plStage');
-    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-
-    // ----- Icons (رموز فقط) -----
-    const S = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-    const F = p => `<svg viewBox="0 0 24 24" fill="currentColor">${p}</svg>`;
-    const SPK = '<path d="M4 9.5v5h3.5l4.5 4v-13l-4.5 4z" fill="currentColor"/>';
-    const ICON = {
-      play: F('<path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z"/>'),
-      pause: F('<rect x="6" y="5" width="4.5" height="14" rx="1.4"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.4"/>'),
-      back10: F('<path d="M12 5V2L7 6l5 4V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/><text x="12" y="16.3" font-size="7.2" font-weight="800" text-anchor="middle" font-family="Arial,sans-serif">10</text>'),
-      fwd10: F('<path d="M12 5V2l5 4-5 4V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z"/><text x="12" y="16.3" font-size="7.2" font-weight="800" text-anchor="middle" font-family="Arial,sans-serif">10</text>'),
-      close: S('<path d="M6 6l12 12M18 6L6 18"/>'),
-      list: S('<path d="M4 6h11M4 12h11M4 18h7"/><path d="M18 13v7l5-3.5z" fill="currentColor"/>'),
-      hd: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="2.5" y="5" width="19" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><text x="12" y="15" font-size="7.5" font-weight="800" text-anchor="middle" font-family="Arial,sans-serif">HD</text></svg>',
-      vol: S(SPK + '<path d="M15.5 9a4.5 4.5 0 0 1 0 6M18.2 6.5a8 8 0 0 1 0 11"/>'),
-      mute: S(SPK + '<path d="M16 9.5l5 5M21 9.5l-5 5"/>'),
-      sun: S('<circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6L7 7M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>'),
-      fs: S('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>'),
-      fsx: S('<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>'),
-      warn: S('<path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/>'),
-      playSm: F('<path d="M8 5v14l11-7z"/>'),
-      heart: S('<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>'),
-      heartOn: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
-      refresh: S('<path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/>'),
-      cast: S('<path d="M3 8V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-5"/><path d="M3 12a8 8 0 0 1 8 8M3 16a4 4 0 0 1 4 4"/><circle cx="3.6" cy="19.6" r="1" fill="currentColor"/>'),
-      airplay: S('<path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/><path d="M12 15l5 6H7z" fill="currentColor"/>'),
-      share: S('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>'),
-      copy: S('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),
-      ext: S('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>')
-    };
-    // أربعة قياسات للفيديو (تتبدل بالنقر على الأيقونة)
-    const ASPECTS = [
-      { fit: 'contain', t: '',            icon: S('<rect x="3" y="5" width="18" height="14" rx="2.5"/><rect x="8" y="9" width="8" height="6" rx="1" fill="currentColor"/>') },
-      { fit: 'cover',   t: '',            icon: S('<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M9 8.5H7.5V10M15 8.5h1.5V10M9 15.5H7.5V14M15 15.5h1.5V14"/>') },
-      { fit: 'fill',    t: '',            icon: S('<path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/>') },
-      { fit: 'cover',   t: 'scale(1.2)',  icon: S('<circle cx="10.5" cy="10.5" r="5.5"/><path d="M15 15l5 5M8.5 10.5h4M10.5 8.5v4"/>') }
-    ];
-    document.querySelectorAll('[data-icon]').forEach(el => el.innerHTML = ICON[el.dataset.icon]);
-
-    // ----- State -----
-    let plToken = 0, playerSeries = null, playerEpId = null, plSeason = null, playerItem = null, activePanel = null, panelOrigin = null, streamUrl = '';
-    let uiOn = true, panelOpen = false, seeking = false, raf = 0, lastSec = -1, lastDur = -1, lastMove = 0;
-    let hideTimer, hudTimer, toastTimer, aspectIdx = 0, brightness = 1, qList = [], qPos = 0, netRetries = 0;
-    const plOpen = () => modal.classList.contains('show');
-    const isFs = () => document.fullscreenElement || document.webkitFullscreenElement;
-
-    function fmt(sec) {
-      if (!isFinite(sec) || sec < 0) sec = 0;
-      const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = Math.floor(sec % 60);
-      return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(s).padStart(2, '0');
+    syncFavUI(it);
+}
+function syncFavUI(it) {
+    const on = isFav(it);
+    document.querySelectorAll('.fav-btn').forEach(b => { if (b.dataset.key === it.key)
+        b.classList.toggle('on', on); });
+    if (activeSeries === it)
+        syncModalButtons();
+    if (playerItem === it)
+        syncPlayerFav();
+    if (favMode && !on)
+        showFavs();
+}
+function showFavs() {
+    listToken++;
+    hasMore = false;
+    loadingMore = false;
+    pending.length = 0;
+    shownKeys.clear();
+    clearGrid();
+    const items = [...favs.values()].reverse().map(itemFromEntry);
+    const grid = document.getElementById('movieGrid');
+    if (!items.length)
+        grid.innerHTML = '<p class="muted">لا توجد عناصر في المفضلة بعد.<br>اضغط على ♥ في أي فيلم أو مسلسل لإضافته.</p>';
+    else {
+        items.forEach(i => shownKeys.add(i.key));
+        renderCards(items);
     }
-
-    // ----- UI show/hide -----
-    function showUI() {
-      uiOn = true;
-      modal.classList.add('ui-on');
-      clearTimeout(hideTimer);
-      kick();
-      if (!video.paused && !panelOpen) hideTimer = setTimeout(hideUI, 3200);
+    updateMoreBtn();
+}
+updateFavCount();
+const $ = id => document.getElementById(id);
+const video = $('videoPlayer');
+const modal = $('playerModal');
+const stage = $('plStage');
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const S = p => `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const F = p => `<svg viewBox="0 0 24 24" fill="currentColor">${p}</svg>`;
+const SPK = '<path d="M4 9.5v5h3.5l4.5 4v-13l-4.5 4z" fill="currentColor"/>';
+const ICON = {
+    play: F('<path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z"/>'),
+    pause: F('<rect x="6" y="5" width="4.5" height="14" rx="1.4"/><rect x="13.5" y="5" width="4.5" height="14" rx="1.4"/>'),
+    back10: F('<path d="M12 5V2L7 6l5 4V7a6 6 0 1 1-6 6H4a8 8 0 1 0 8-8z"/><text x="12" y="16.3" font-size="7.2" font-weight="800" text-anchor="middle" font-family="Arial,sans-serif">10</text>'),
+    fwd10: F('<path d="M12 5V2l5 4-5 4V7a6 6 0 1 0 6 6h2a8 8 0 1 1-8-8z"/><text x="12" y="16.3" font-size="7.2" font-weight="800" text-anchor="middle" font-family="Arial,sans-serif">10</text>'),
+    close: S('<path d="M6 6l12 12M18 6L6 18"/>'),
+    list: S('<path d="M4 6h11M4 12h11M4 18h7"/><path d="M18 13v7l5-3.5z" fill="currentColor"/>'),
+    hd: '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="2.5" y="5" width="19" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><text x="12" y="15" font-size="7.5" font-weight="800" text-anchor="middle" font-family="Arial,sans-serif">HD</text></svg>',
+    vol: S(SPK + '<path d="M15.5 9a4.5 4.5 0 0 1 0 6M18.2 6.5a8 8 0 0 1 0 11"/>'),
+    mute: S(SPK + '<path d="M16 9.5l5 5M21 9.5l-5 5"/>'),
+    sun: S('<circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6L7 7M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/>'),
+    fs: S('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>'),
+    fsx: S('<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>'),
+    warn: S('<path d="M12 8v5M12 16.5v.5"/><circle cx="12" cy="12" r="9"/>'),
+    playSm: F('<path d="M8 5v14l11-7z"/>'),
+    heart: S('<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/>'),
+    heartOn: '<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21.2l7.8-7.7 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></svg>',
+    refresh: S('<path d="M23 4v6h-6M1 20v-6h6"/><path d="M3.5 9a9 9 0 0 1 14.9-3.4L23 10M1 14l4.6 4.4A9 9 0 0 0 20.5 15"/>'),
+    cast: S('<path d="M3 8V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-5"/><path d="M3 12a8 8 0 0 1 8 8M3 16a4 4 0 0 1 4 4"/><circle cx="3.6" cy="19.6" r="1" fill="currentColor"/>'),
+    airplay: S('<path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"/><path d="M12 15l5 6H7z" fill="currentColor"/>'),
+    share: S('<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/>'),
+    copy: S('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>'),
+    ext: S('<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/>')
+};
+const ASPECTS = [
+    { fit: 'contain', t: '', icon: S('<rect x="3" y="5" width="18" height="14" rx="2.5"/><rect x="8" y="9" width="8" height="6" rx="1" fill="currentColor"/>') },
+    { fit: 'cover', t: '', icon: S('<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M9 8.5H7.5V10M15 8.5h1.5V10M9 15.5H7.5V14M15 15.5h1.5V14"/>') },
+    { fit: 'fill', t: '', icon: S('<path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/>') },
+    { fit: 'cover', t: 'scale(1.2)', icon: S('<circle cx="10.5" cy="10.5" r="5.5"/><path d="M15 15l5 5M8.5 10.5h4M10.5 8.5v4"/>') }
+];
+document.querySelectorAll('[data-icon]').forEach(el => el.innerHTML = ICON[el.dataset.icon]);
+function fcs(el) { if (!el)
+    return; try {
+    el.focus({ preventScroll: true });
+}
+catch (e) {
+    try {
+        el.focus();
     }
-    function hideUI() {
-      if (seeking || panelOpen) return;
-      uiOn = false;
-      modal.classList.remove('ui-on');
+    catch (e2) { }
+} }
+function resetScroll() {
+    [modal, stage].forEach(n => { if (n && (n.scrollLeft || n.scrollTop)) {
+        n.scrollLeft = 0;
+        n.scrollTop = 0;
+    } });
+    if (document.scrollingElement && modal.classList.contains('show') && (document.scrollingElement.scrollLeft))
+        document.scrollingElement.scrollLeft = 0;
+}
+modal.addEventListener('scroll', resetScroll, true);
+stage.addEventListener('scroll', resetScroll, true);
+function centerIn(box, el) { if (box && el)
+    box.scrollTop = Math.max(0, el.offsetTop - (box.clientHeight - el.offsetHeight) / 2); }
+const KC = { 37: 'Left', 38: 'Up', 39: 'Right', 40: 'Down', 13: 'Enter', 23: 'Enter', 66: 'Enter', 27: 'Back', 8: 'Back', 4: 'Back', 111: 'Back',
+    10009: 'Back', 461: 'Back', 32: 'Space', 179: 'PlayPause', 85: 'PlayPause', 415: 'Play', 19: 'Pause', 413: 'Stop', 417: 'FF', 412: 'RW', 228: 'FF', 227: 'RW',
+    176: 'Next', 177: 'Prev', 427: 'Next', 428: 'Prev', 33: 'Prev', 34: 'Next', 36: 'Home', 35: 'End', 93: 'Menu', 82: 'Menu', 457: 'Menu', 70: 'F', 77: 'M', 78: 'Next', 80: 'Prev' };
+const KN = { ArrowLeft: 'Left', ArrowRight: 'Right', ArrowUp: 'Up', ArrowDown: 'Down', Enter: 'Enter', NumpadEnter: 'Enter', Escape: 'Back', Backspace: 'Back', GoBack: 'Back', BrowserBack: 'Back',
+    ' ': 'Space', MediaPlayPause: 'PlayPause', MediaPlay: 'Play', MediaPause: 'Pause', MediaStop: 'Stop', MediaFastForward: 'FF', MediaRewind: 'RW', MediaTrackNext: 'Next', MediaTrackPrevious: 'Prev',
+    ChannelUp: 'Next', ChannelDown: 'Prev', PageDown: 'Next', PageUp: 'Prev', Home: 'Home', End: 'End', ContextMenu: 'Menu', Menu: 'Menu', Info: 'Menu', f: 'F', F: 'F', m: 'M', M: 'M', n: 'Next', N: 'Next', p: 'Prev', P: 'Prev' };
+function keyName(e) { return KN[e.key] || KC[e.keyCode] || ''; }
+let histPushed = false, ignorePop = 0;
+function layerOpened() { if (histPushed)
+    return; try {
+    history.pushState({ alm: 1 }, '');
+    histPushed = true;
+}
+catch (e) { } }
+function layerClosed() {
+    setTimeout(() => {
+        if (!histPushed || modal.classList.contains('show') || seriesModal.classList.contains('show'))
+            return;
+        histPushed = false;
+        ignorePop++;
+        try {
+            history.back();
+        }
+        catch (e) {
+            ignorePop = 0;
+        }
+    }, 0);
+}
+window.addEventListener('popstate', () => {
+    if (ignorePop) {
+        ignorePop--;
+        return;
     }
-    function setLoading(on) { modal.classList.toggle('loading', on); }
-
-    function toast(content, isHtml) {
-      const t = $('plToast');
-      if (isHtml) t.innerHTML = content; else t.textContent = content;
-      t.classList.add('show');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => t.classList.remove('show'), 1400);
+    histPushed = false;
+    if (modal.classList.contains('show')) {
+        if (panelOpen) {
+            closePanel();
+            layerOpened();
+            return;
+        }
+        closePlayer(true);
     }
-
-    function showHud(kind, pct) {
-      const hud = $('plHud');
-      hud.className = 'pl-hud show ' + (kind === 'vol' ? 'right' : 'left');
-      $('plHudIcon').innerHTML = kind === 'vol' ? (pct === 0 ? ICON.mute : ICON.vol) : ICON.sun;
-      $('plHudFill').style.transform = `scaleY(${pct})`;
-      clearTimeout(hudTimer);
-      hudTimer = setTimeout(() => hud.classList.remove('show'), 800);
-    }
-
-    // ----- Progress -----
-    function setProg(p) {
-      $('plPlayed').style.transform = `scaleX(${p})`;
-      $('plThumb').style.left = (p * 100) + '%';
-    }
-    function updateProgress() {
-      if (seeking) return;
-      const d = video.duration || 0, t = video.currentTime || 0;
-      setProg(d ? t / d : 0);
-      const sec = Math.floor(t);
-      if (sec !== lastSec) { lastSec = sec; $('plCur').textContent = fmt(t); }
-      if (d && Math.floor(d) !== lastDur) { lastDur = Math.floor(d); $('plDur').textContent = fmt(d); }
-      let be = 0;
-      const b = video.buffered;
-      for (let i = 0; i < b.length; i++) if (b.start(i) <= t + 0.5 && b.end(i) >= t) { be = b.end(i); break; }
-      $('plBuf').style.transform = `scaleX(${d ? clamp(be / d, 0, 1) : 0})`;
-    }
-    function loop() {
-      raf = 0;
-      updateProgress();
-      if (uiOn && !video.paused && plOpen()) raf = requestAnimationFrame(loop);
-    }
-    function kick() { if (!raf) raf = requestAnimationFrame(loop); }
-
-    const seek = $('plSeek');
-    const seekPct = e => { const r = seek.getBoundingClientRect(); return clamp((e.clientX - r.left) / r.width, 0, 1); };
-    seek.addEventListener('pointerdown', e => {
-      if (!video.duration) return;
-      seeking = true; seek.classList.add('drag'); seek.setPointerCapture(e.pointerId);
-      const p = seekPct(e); setProg(p); $('plCur').textContent = fmt(p * video.duration);
-      showUI();
+    else if (seriesModal.classList.contains('show'))
+        closeSeriesModal(true);
+});
+let plToken = 0, playerSeries = null, playerEpId = null, plSeason = null, playerItem = null, activePanel = null, panelOrigin = null, streamUrl = '';
+let uiOn = true, panelOpen = false, seeking = false, raf = 0, lastSec = -1, lastDur = -1, lastMove = 0;
+let hideTimer, hudTimer, toastTimer, aspectIdx = 0, brightness = 1, qList = [], qPos = 0, netRetries = 0;
+const plOpen = () => modal.classList.contains('show');
+const isFs = () => document.fullscreenElement || document.webkitFullscreenElement;
+function fmt(sec) {
+    if (!isFinite(sec) || sec < 0)
+        sec = 0;
+    const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = Math.floor(sec % 60);
+    return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(s).padStart(2, '0');
+}
+let hlsLoad = null;
+function loadHls() {
+    if (window.Hls)
+        return Promise.resolve();
+    if (hlsLoad)
+        return hlsLoad;
+    hlsLoad = new Promise((resolve, reject) => {
+        const sc = document.createElement('script');
+        sc.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5/dist/hls.min.js';
+        sc.onload = () => resolve();
+        sc.onerror = () => { hlsLoad = null; reject(new Error('hls')); };
+        document.head.appendChild(sc);
     });
-    seek.addEventListener('pointermove', e => {
-      if (!seeking) return;
-      const p = seekPct(e); setProg(p); $('plCur').textContent = fmt(p * video.duration);
-    });
-    seek.addEventListener('pointerup', e => {
-      if (!seeking) return;
-      seeking = false; seek.classList.remove('drag');
-      video.currentTime = seekPct(e) * video.duration;
-      showUI();
-    });
-    seek.addEventListener('pointercancel', () => { seeking = false; seek.classList.remove('drag'); });
-
-    // ----- Controls -----
-    function togglePlay() { video.paused ? video.play().catch(() => {}) : video.pause(); }
-    function skip(sec) {
-      video.currentTime = clamp(video.currentTime + sec, 0, video.duration || 1e9);
-      showUI();
+    return hlsLoad;
+}
+function showUI() {
+    uiOn = true;
+    modal.classList.add('ui-on');
+    clearTimeout(hideTimer);
+    kick();
+    if (!video.paused && !panelOpen)
+        hideTimer = setTimeout(hideUI, 3200);
+}
+function hideUI() {
+    if (seeking || panelOpen)
+        return;
+    uiOn = false;
+    modal.classList.remove('ui-on');
+}
+function setLoading(on) { modal.classList.toggle('loading', on); }
+function toast(content, isHtml) {
+    const t = $('plToast');
+    if (isHtml)
+        t.innerHTML = content;
+    else
+        t.textContent = content;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 1400);
+}
+function showHud(kind, pct) {
+    const hud = $('plHud');
+    hud.className = 'pl-hud show ' + (kind === 'vol' ? 'right' : 'left');
+    $('plHudIcon').innerHTML = kind === 'vol' ? (pct === 0 ? ICON.mute : ICON.vol) : ICON.sun;
+    $('plHudFill').style.transform = `scaleY(${pct})`;
+    clearTimeout(hudTimer);
+    hudTimer = setTimeout(() => hud.classList.remove('show'), 800);
+}
+function setProg(p) {
+    $('plPlayed').style.transform = `scaleX(${p})`;
+    $('plThumb').style.left = (p * 100) + '%';
+}
+function updateProgress() {
+    if (seeking)
+        return;
+    const d = video.duration || 0, t = video.currentTime || 0;
+    setProg(d ? t / d : 0);
+    const sec = Math.floor(t);
+    if (sec !== lastSec) {
+        lastSec = sec;
+        $('plCur').textContent = fmt(t);
     }
-    function setVolume(v) {
-      v = clamp(v, 0, 1);
-      video.volume = v; video.muted = v === 0;
-      showHud('vol', v);
+    if (d && Math.floor(d) !== lastDur) {
+        lastDur = Math.floor(d);
+        $('plDur').textContent = fmt(d);
     }
-    function setBrightness(b) {
-      brightness = clamp(b, 0.3, 1.7);
-      video.style.filter = brightness === 1 ? '' : `brightness(${brightness})`;
-      showHud('bright', (brightness - 0.3) / 1.4);
-    }
-    function cycleAspect() {
-      aspectIdx = (aspectIdx + 1) % ASPECTS.length;
-      const a = ASPECTS[aspectIdx];
-      video.style.objectFit = a.fit;
-      video.style.transform = a.t;
-      $('plAspectIc').innerHTML = a.icon;
-      toast(a.icon, true);
-      showUI();
-    }
-    function levelLabel(i) { const l = hls.levels[i]; return l.height ? String(l.height) : Math.round(l.bitrate / 1000) + 'k'; }
-    function buildQualities() {
-      if (!hls || !hls.levels || hls.levels.length < 2) return;
-      const best = new Map();
-      hls.levels.forEach((l, i) => {
+    let be = 0;
+    const b = video.buffered;
+    for (let i = 0; i < b.length; i++)
+        if (b.start(i) <= t + 0.5 && b.end(i) >= t) {
+            be = b.end(i);
+            break;
+        }
+    $('plBuf').style.transform = `scaleX(${d ? clamp(be / d, 0, 1) : 0})`;
+}
+function loop() {
+    raf = 0;
+    updateProgress();
+    if (uiOn && !video.paused && plOpen())
+        raf = setTimeout(loop, 250);
+}
+function kick() { if (!raf)
+    raf = setTimeout(loop, 0); }
+const seek = $('plSeek');
+const seekPct = e => { const r = seek.getBoundingClientRect(); return clamp((e.clientX - r.left) / r.width, 0, 1); };
+seek.addEventListener('pointerdown', e => {
+    if (!video.duration)
+        return;
+    seeking = true;
+    seek.classList.add('drag');
+    seek.setPointerCapture(e.pointerId);
+    const p = seekPct(e);
+    setProg(p);
+    $('plCur').textContent = fmt(p * video.duration);
+    showUI();
+});
+seek.addEventListener('pointermove', e => {
+    if (!seeking)
+        return;
+    const p = seekPct(e);
+    setProg(p);
+    $('plCur').textContent = fmt(p * video.duration);
+});
+seek.addEventListener('pointerup', e => {
+    if (!seeking)
+        return;
+    seeking = false;
+    seek.classList.remove('drag');
+    video.currentTime = seekPct(e) * video.duration;
+    showUI();
+});
+seek.addEventListener('pointercancel', () => { seeking = false; seek.classList.remove('drag'); });
+function togglePlay() { video.paused ? video.play().catch(() => { }) : video.pause(); }
+function skip(sec) {
+    video.currentTime = clamp(video.currentTime + sec, 0, video.duration || 1e9);
+    showUI();
+}
+function setVolume(v) {
+    v = clamp(v, 0, 1);
+    video.volume = v;
+    video.muted = v === 0;
+    showHud('vol', v);
+}
+function setBrightness(b) {
+    brightness = clamp(b, 0.3, 1.7);
+    video.style.filter = brightness === 1 ? '' : `brightness(${brightness})`;
+    showHud('bright', (brightness - 0.3) / 1.4);
+}
+function cycleAspect() {
+    aspectIdx = (aspectIdx + 1) % ASPECTS.length;
+    const a = ASPECTS[aspectIdx];
+    video.style.objectFit = a.fit;
+    video.style.transform = a.t;
+    $('plAspectIc').innerHTML = a.icon;
+    toast(a.icon, true);
+    showUI();
+}
+function levelLabel(i) { const l = hls.levels[i]; return l.height ? String(l.height) : Math.round(l.bitrate / 1000) + 'k'; }
+function buildQualities() {
+    if (!hls || !hls.levels || hls.levels.length < 2)
+        return;
+    const best = new Map();
+    hls.levels.forEach((l, i) => {
         const h = l.height || l.bitrate;
         const prev = best.get(h);
-        if (prev === undefined || hls.levels[prev].bitrate < l.bitrate) best.set(h, i);
-      });
-      qList = [-1, ...[...best.entries()].sort((a, b) => b[0] - a[0]).map(e => e[1])];
-      qPos = 0;
-      if (qList.length > 2) { $('plQuality').style.display = 'flex'; $('plQBadge').textContent = 'A'; }
+        if (prev === undefined || hls.levels[prev].bitrate < l.bitrate)
+            best.set(h, i);
+    });
+    qList = [-1, ...[...best.entries()].sort((a, b) => b[0] - a[0]).map(e => e[1])];
+    qPos = 0;
+    if (qList.length > 2) {
+        $('plQuality').style.display = 'flex';
+        $('plQBadge').textContent = 'A';
     }
-    function cycleQuality() {
-      if (!hls || qList.length < 3) return;
-      qPos = (qPos + 1) % qList.length;
-      hls.currentLevel = qList[qPos];
-      const auto = qList[qPos] === -1;
-      $('plQBadge').textContent = auto ? 'A' : levelLabel(qList[qPos]);
-      toast(auto ? 'AUTO' : levelLabel(qList[qPos]) + 'p');
-      showUI();
-    }
-
-    // ----- Fullscreen + دوران الشاشة + تجاوز حدود الكاميرا -----
-    async function toggleFs() {
-      if (isFs()) {
-        try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {}
-        try { screen.orientation.unlock(); } catch (e) {}
+}
+function cycleQuality() {
+    if (!hls || qList.length < 3)
         return;
-      }
-      try {
-        if (stage.requestFullscreen) await stage.requestFullscreen({ navigationUI: 'hide' });
-        else if (stage.webkitRequestFullscreen) stage.webkitRequestFullscreen();
-        else if (video.webkitEnterFullscreen) { video.webkitEnterFullscreen(); return; }
-      } catch (e) {}
-      try { await screen.orientation.lock('landscape'); } catch (e) {}
-    }
-    ['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => {
-      $('plFsIc').innerHTML = isFs() ? ICON.fsx : ICON.fs;
-      if (!isFs()) { try { screen.orientation.unlock(); } catch (e) {} }
-    }));
-
-    // ----- Gestures: يمين = صوت، يسار = إضاءة، نقرتان = ملء الشاشة -----
-    const gz = $('plGesture');
-    let g = null, lastTap = 0, lastX = 0, lastY = 0, tapTimer = 0;
-    gz.addEventListener('pointerdown', e => {
-      gz.setPointerCapture(e.pointerId);
-      const r = stage.getBoundingClientRect();
-      g = { id: e.pointerId, x: e.clientX, y: e.clientY, mode: null, moved: false, h: r.height,
-            side: (e.clientX - r.left) < r.width / 2 ? 'left' : 'right' };
+    qPos = (qPos + 1) % qList.length;
+    hls.currentLevel = qList[qPos];
+    const auto = qList[qPos] === -1;
+    $('plQBadge').textContent = auto ? 'A' : levelLabel(qList[qPos]);
+    toast(auto ? 'AUTO' : levelLabel(qList[qPos]) + 'p');
+    showUI();
+}
+function toggleFs() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (isFs()) {
+            try {
+                (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+            }
+            catch (e) { }
+            try {
+                screen.orientation.unlock();
+            }
+            catch (e) { }
+            return;
+        }
+        try {
+            if (stage.requestFullscreen)
+                yield stage.requestFullscreen({ navigationUI: 'hide' });
+            else if (stage.webkitRequestFullscreen)
+                stage.webkitRequestFullscreen();
+            else if (video.webkitEnterFullscreen) {
+                video.webkitEnterFullscreen();
+                return;
+            }
+        }
+        catch (e) { }
+        try {
+            yield screen.orientation.lock('landscape');
+        }
+        catch (e) { }
     });
-    gz.addEventListener('pointermove', e => {
-      if (!g || e.pointerId !== g.id) return;
-      const dx = e.clientX - g.x, dy = e.clientY - g.y;
-      if (Math.hypot(dx, dy) > 12) g.moved = true;
-      if (!g.mode) {
+}
+['fullscreenchange', 'webkitfullscreenchange'].forEach(ev => document.addEventListener(ev, () => {
+    $('plFsIc').innerHTML = isFs() ? ICON.fsx : ICON.fs;
+    if (!isFs()) {
+        try {
+            screen.orientation.unlock();
+        }
+        catch (e) { }
+    }
+}));
+const gz = $('plGesture');
+let g = null, lastTap = 0, lastX = 0, lastY = 0, tapTimer = 0;
+gz.addEventListener('pointerdown', e => {
+    gz.setPointerCapture(e.pointerId);
+    const r = stage.getBoundingClientRect();
+    g = { id: e.pointerId, x: e.clientX, y: e.clientY, mode: null, moved: false, h: r.height, mouse: e.pointerType === 'mouse',
+        side: (e.clientX - r.left) < r.width / 2 ? 'left' : 'right' };
+});
+gz.addEventListener('pointermove', e => {
+    if (!g || e.pointerId !== g.id)
+        return;
+    const dx = e.clientX - g.x, dy = e.clientY - g.y;
+    if (Math.hypot(dx, dy) > 12)
+        g.moved = true;
+    if (!g.mode) {
         if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) {
-          g.mode = g.side === 'left' ? 'bright' : 'vol';
-          g.start = g.mode === 'vol' ? (video.muted ? 0 : video.volume) : brightness;
-        } else return;
-      }
-      const delta = -dy / (g.h * 0.7);
-      if (g.mode === 'vol') setVolume(g.start + delta);
-      else setBrightness(g.start + delta * 1.4);
-    });
-    const gEnd = e => {
-      if (!g || e.pointerId !== g.id) return;
-      const was = g; g = null;
-      if (was.moved || e.type === 'pointercancel') return;
-      const now = performance.now();
-      if (now - lastTap < 300 && Math.hypot(e.clientX - lastX, e.clientY - lastY) < 40) {
-        clearTimeout(tapTimer); lastTap = 0; toggleFs(); return;
-      }
-      lastTap = now; lastX = e.clientX; lastY = e.clientY;
-      tapTimer = setTimeout(() => {
-        if (panelOpen) closePanel();
-        else if (uiOn) hideUI(); else showUI();
-      }, 260);
-    };
-    gz.addEventListener('pointerup', gEnd);
-    gz.addEventListener('pointercancel', gEnd);
-    stage.addEventListener('pointermove', e => {
-      if (e.pointerType !== 'mouse') return;
-      const n = performance.now();
-      if (n - lastMove > 200) { lastMove = n; showUI(); }
-    });
-
-    // ----- Episodes panel -----
-    function seasonsSorted(s) {
-      const seasons = groupSeasons(s);
-      const names = Object.keys(seasons).sort((a, b) => seasonOrder(a) - seasonOrder(b) || a.localeCompare(b, 'ar'));
-      return { seasons, names };
+            g.mode = g.side === 'left' ? 'bright' : 'vol';
+            g.start = g.mode === 'vol' ? (video.muted ? 0 : video.volume) : brightness;
+        }
+        else
+            return;
     }
-    function renderEpPanel() {
-      const s = playerSeries;
-      if (!s) return;
-      const { seasons, names } = seasonsSorted(s);
-      if (!names.length) return;
-      if (!plSeason || !seasons[plSeason]) {
+    const delta = -dy / (g.h * 0.7);
+    if (g.mode === 'vol')
+        setVolume(g.start + delta);
+    else
+        setBrightness(g.start + delta * 1.4);
+});
+const gEnd = e => {
+    if (!g || e.pointerId !== g.id)
+        return;
+    const was = g;
+    g = null;
+    if (was.moved || e.type === 'pointercancel')
+        return;
+    const now = performance.now();
+    if (now - lastTap < 300 && Math.hypot(e.clientX - lastX, e.clientY - lastY) < 40) {
+        clearTimeout(tapTimer);
+        lastTap = 0;
+        toggleFs();
+        return;
+    }
+    lastTap = now;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    tapTimer = setTimeout(() => {
+        if (panelOpen)
+            closePanel();
+        else if (was.mouse) {
+            togglePlay();
+            showUI();
+        }
+        else if (uiOn)
+            hideUI();
+        else
+            showUI();
+    }, was.mouse ? 220 : 260);
+};
+gz.addEventListener('pointerup', gEnd);
+gz.addEventListener('pointercancel', gEnd);
+stage.addEventListener('wheel', e => {
+    if (panelOpen)
+        return;
+    e.preventDefault();
+    setVolume((video.muted ? 0 : video.volume) + (e.deltaY < 0 ? 0.05 : -0.05));
+}, { passive: false });
+stage.addEventListener('pointermove', e => {
+    if (e.pointerType !== 'mouse')
+        return;
+    const n = performance.now();
+    if (n - lastMove > 200) {
+        lastMove = n;
+        showUI();
+    }
+});
+function seasonsSorted(s) {
+    const seasons = groupSeasons(s);
+    const names = Object.keys(seasons).sort((a, b) => seasonOrder(a) - seasonOrder(b) || a.localeCompare(b, 'ar'));
+    return { seasons, names };
+}
+function renderEpPanel() {
+    const s = playerSeries;
+    if (!s)
+        return;
+    const { seasons, names } = seasonsSorted(s);
+    if (!names.length)
+        return;
+    if (!plSeason || !seasons[plSeason]) {
         const cur = s.episodes.find(e => e.realid === playerEpId);
         plSeason = cur ? seasonNameOf(cur) : names[0];
-        if (!seasons[plSeason]) plSeason = names[0];
-      }
-      const ae = document.activeElement;
-      const keep = ae && ae.dataset ? ae.dataset.id : null;
-
-      const chips = $('plChips');
-      chips.innerHTML = '';
-      if (names.length > 1) names.forEach((name, i) => {
-        const b = document.createElement('button');
-        b.className = 'pl-chip' + (name === plSeason ? ' on' : '');
-        b.tabIndex = 0;
-        const o = seasonOrder(name);
-        b.textContent = o < 999 ? o : i + 1;
-        b.onclick = () => { plSeason = name; renderEpPanel(); };
-        chips.appendChild(b);
-      });
-
-      const box = $('plEps');
-      box.innerHTML = '';
-      seasons[plSeason].slice().sort((a, b) => episodeNumber(a) - episodeNumber(b)).forEach(ep => {
+        if (!seasons[plSeason])
+            plSeason = names[0];
+    }
+    const ae = document.activeElement;
+    const keep = ae && ae.dataset ? ae.dataset.id : null;
+    const chips = $('plChips');
+    chips.innerHTML = '';
+    if (names.length > 1)
+        names.forEach((name, i) => {
+            const b = document.createElement('button');
+            b.className = 'pl-chip' + (name === plSeason ? ' on' : '');
+            b.tabIndex = 0;
+            const o = seasonOrder(name);
+            b.textContent = o < 999 ? o : i + 1;
+            b.onclick = () => { plSeason = name; renderEpPanel(); };
+            chips.appendChild(b);
+        });
+    const box = $('plEps');
+    box.innerHTML = '';
+    seasons[plSeason].slice().sort((a, b) => episodeNumber(a) - episodeNumber(b)).forEach(ep => {
         const b = document.createElement('button');
         b.className = 'pl-ep' + (ep.realid === playerEpId ? ' cur' : '');
         b.dataset.id = ep.realid;
@@ -1712,371 +2127,701 @@
         b.textContent = n === 9999 ? '?' : n;
         b.onclick = () => { closePanel(true); playMovie(ep.realid, ep.title, playerSeries); };
         box.appendChild(b);
-      });
-      if (keep) { const f = Array.from(box.children).find(el => el.dataset.id === keep); if (f) f.focus(); }
+    });
+    if (keep) {
+        const f = Array.from(box.children).find(el => el.dataset.id === keep);
+        if (f)
+            fcs(f);
     }
-    function openPanel() {
-      if (!playerSeries) return;
-      hideUI();
-      panelOpen = true;
-      activePanel = $('plPanel');
-      panelOrigin = $('plEpisodes');
-      plSeason = null;
-      renderEpPanel();
-      $('plPanel').classList.add('open');
-      const cur = $('plEps').querySelector('.cur');
-      if (cur) { cur.scrollIntoView({ block: 'center' }); setTimeout(() => cur.focus(), 60); }
+}
+function openPanel() {
+    if (!playerSeries)
+        return;
+    hideUI();
+    panelOpen = true;
+    activePanel = $('plPanel');
+    panelOrigin = $('plEpisodes');
+    plSeason = null;
+    renderEpPanel();
+    $('plPanel').classList.add('open');
+    const cur = $('plEps').querySelector('.cur');
+    if (cur) {
+        centerIn($('plEps'), cur);
+        fcs(cur);
+        resetScroll();
     }
-    function closePanel(silent) {
-      $('plPanel').classList.remove('open');
-      $('plShare').classList.remove('open');
-      const origin = panelOrigin;
-      panelOpen = false;
-      activePanel = null;
-      if (!silent) { showUI(); (origin || $('plEpisodes')).focus(); }
+}
+function closePanel(silent) {
+    $('plPanel').classList.remove('open');
+    $('plShare').classList.remove('open');
+    const origin = panelOrigin;
+    panelOpen = false;
+    activePanel = null;
+    resetScroll();
+    if (!silent) {
+        showUI();
+        fcs(origin || $('plEpisodes'));
     }
-
-    // ----- مشاركة الفيديو / العرض على التلفزيون -----
-    const UA = navigator.userAgent;
-    const isIOS = /iPhone|iPad|iPod/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1);
-    const isAndroid = /Android/.test(UA);
-    const canAirPlay = () => typeof video.webkitShowPlaybackTargetPicker === 'function';
-    const canCast = () => !!window.chrome && !isIOS;
-
-    function syncPlayerFav() {
-      const on = isFav(playerItem);
-      $('plFavIc').innerHTML = on ? ICON.heartOn : ICON.heart;
-      $('plFav').classList.toggle('favon', on);
-    }
-
-    async function copyText(t) {
-      try { await navigator.clipboard.writeText(t); return true; }
-      catch (e) {
+}
+const UA = navigator.userAgent;
+const isIOS = /iPhone|iPad|iPod/.test(UA) || (/Macintosh/.test(UA) && navigator.maxTouchPoints > 1);
+const isAndroid = /Android/.test(UA);
+const isOld = (/Android ([0-9]+)/.exec(UA) || [0, 99])[1] < 8 || ((/Chrome\/([0-9]+)/.exec(UA) || [0, 99])[1] < 70);
+const canAirPlay = () => typeof video.webkitShowPlaybackTargetPicker === 'function';
+const canCast = () => !!window.chrome && !isIOS;
+function syncPlayerFav() {
+    const on = isFav(playerItem);
+    $('plFavIc').innerHTML = on ? ICON.heartOn : ICON.heart;
+    $('plFav').classList.toggle('favon', on);
+}
+function copyText(t) {
+    return __awaiter(this, void 0, void 0, function* () {
         try {
-          const ta = document.createElement('textarea');
-          ta.value = t; ta.style.cssText = 'position:fixed;opacity:0';
-          document.body.appendChild(ta); ta.select();
-          const ok = document.execCommand('copy'); ta.remove(); return ok;
-        } catch (e2) { return false; }
-      }
-    }
-
-    let castLoad = null;
-    function loadCastSdk() {
-      if (castLoad) return castLoad;
-      castLoad = new Promise((resolve, reject) => {
+            yield navigator.clipboard.writeText(t);
+            return true;
+        }
+        catch (e) {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = t;
+                ta.style.cssText = 'position:fixed;opacity:0';
+                document.body.appendChild(ta);
+                ta.select();
+                const ok = document.execCommand('copy');
+                ta.remove();
+                return ok;
+            }
+            catch (e2) {
+                return false;
+            }
+        }
+    });
+}
+let castLoad = null;
+function loadCastSdk() {
+    if (castLoad)
+        return castLoad;
+    castLoad = new Promise((resolve, reject) => {
         window.__onGCastApiAvailable = ok => ok ? resolve() : reject(new Error('cast-unavailable'));
         const sc = document.createElement('script');
         sc.src = 'https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1';
         sc.onerror = () => reject(new Error('cast-load'));
         document.head.appendChild(sc);
         setTimeout(() => reject(new Error('cast-timeout')), 9000);
-      });
-      castLoad.catch(() => { castLoad = null; });
-      return castLoad;
-    }
-
-    async function castStart() {
-      if (!streamUrl) { toast('لا يوجد رابط بث'); return; }
-      toast('جاري البحث عن الأجهزة…');
-      try { await loadCastSdk(); } catch (e) { toast('البث غير مدعوم في هذا المتصفح'); return; }
-      try {
-        const ctx = cast.framework.CastContext.getInstance();
-        ctx.setOptions({ receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID, autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED });
-        await ctx.requestSession();
-        const session = ctx.getCurrentSession();
-        const info = new chrome.cast.media.MediaInfo(streamUrl, 'application/x-mpegURL');
-        info.streamType = chrome.cast.media.StreamType.BUFFERED;
-        const md = new chrome.cast.media.GenericMediaMetadata();
-        md.title = $('plTitle').textContent || 'Alameeere Movies';
-        if (playerItem && /^https?:/.test(playerItem.thumbnail || '')) md.images = [new chrome.cast.Image(playerItem.thumbnail)];
-        info.metadata = md;
-        const req = new chrome.cast.media.LoadRequest(info);
-        req.currentTime = video.currentTime || 0;
-        req.autoplay = true;
-        await session.loadMedia(req);
-        video.pause();
-        toast('تم البث على ' + (session.getCastDevice().friendlyName || 'التلفزيون'));
-      } catch (e) {
-        if (e === 'cancel' || (e && e.code === 'cancel')) return;
-        toast('تعذر البث — قد يمنع المصدر تشغيل الرابط على التلفزيون');
-      }
-    }
-
-    function openExternal() {
-      try {
+    });
+    castLoad.catch(() => { castLoad = null; });
+    return castLoad;
+}
+function castStart() {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!streamUrl) {
+            toast('لا يوجد رابط بث');
+            return;
+        }
+        toast('جاري البحث عن الأجهزة…');
+        try {
+            yield loadCastSdk();
+        }
+        catch (e) {
+            toast('البث غير مدعوم في هذا المتصفح');
+            return;
+        }
+        try {
+            const ctx = cast.framework.CastContext.getInstance();
+            ctx.setOptions({ receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID, autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED });
+            yield ctx.requestSession();
+            const session = ctx.getCurrentSession();
+            const info = new chrome.cast.media.MediaInfo(streamUrl, 'application/x-mpegURL');
+            info.streamType = chrome.cast.media.StreamType.BUFFERED;
+            const md = new chrome.cast.media.GenericMediaMetadata();
+            md.title = $('plTitle').textContent || 'Alameeere Movies';
+            if (playerItem && /^https?:/.test(playerItem.thumbnail || ''))
+                md.images = [new chrome.cast.Image(playerItem.thumbnail)];
+            info.metadata = md;
+            const req = new chrome.cast.media.LoadRequest(info);
+            req.currentTime = video.currentTime || 0;
+            req.autoplay = true;
+            yield session.loadMedia(req);
+            video.pause();
+            toast('تم البث على ' + (session.getCastDevice().friendlyName || 'التلفزيون'));
+        }
+        catch (e) {
+            if (e === 'cancel' || (e && e.code === 'cancel'))
+                return;
+            toast('تعذر البث — قد يمنع المصدر تشغيل الرابط على التلفزيون');
+        }
+    });
+}
+function openExternal() {
+    try {
         const u = new URL(streamUrl);
-        if (isAndroid) location.href = 'intent://' + u.host + u.pathname + u.search + '#Intent;scheme=' + u.protocol.replace(':', '') + ';action=android.intent.action.VIEW;type=video/*;end';
-        else if (isIOS) location.href = 'vlc-x-callback://x-callback-url/stream?url=' + encodeURIComponent(streamUrl);
-      } catch (e) { toast('تعذر فتح المشغل'); }
+        if (isAndroid)
+            location.href = 'intent://' + u.host + u.pathname + u.search + '#Intent;scheme=' + u.protocol.replace(':', '') + ';action=android.intent.action.VIEW;type=video/*;end';
+        else if (isIOS)
+            location.href = 'vlc-x-callback://x-callback-url/stream?url=' + encodeURIComponent(streamUrl);
     }
-
-    function shareOptions() {
-      const o = [];
-      if (canCast()) o.push({ icon: 'cast', label: 'بث إلى التلفزيون (Chromecast / Google TV)', run: castStart });
-      if (canAirPlay()) o.push({ icon: 'airplay', label: 'AirPlay (Apple TV وتلفزيونات AirPlay)', run: () => { try { video.webkitShowPlaybackTargetPicker(); } catch (e) { toast('AirPlay غير متاح'); } } });
-      if (isAndroid || isIOS) o.push({ icon: 'ext', label: 'فتح في مشغل خارجي (VLC / تطبيقات البث)', run: openExternal });
-      if (navigator.share) o.push({ icon: 'share', label: 'مشاركة رابط البث', run: () => navigator.share({ title: $('plTitle').textContent || 'Alameeere Movies', url: streamUrl }).catch(() => {}) });
-      o.push({ icon: 'copy', label: 'نسخ رابط البث', run: async () => toast((await copyText(streamUrl)) ? 'تم نسخ الرابط' : 'تعذر النسخ') });
-      return o;
+    catch (e) {
+        toast('تعذر فتح المشغل');
     }
-
-    function openShare() {
-      if (!streamUrl) { toast('انتظر تجهيز الفيديو أولاً'); return; }
-      hideUI();
-      panelOpen = true;
-      activePanel = $('plShare');
-      panelOrigin = $('plCast');
-      const box = $('plOpts');
-      box.innerHTML = '';
-      shareOptions().forEach(opt => {
+}
+function shareOptions() {
+    const o = [];
+    if (canCast())
+        o.push({ icon: 'cast', label: 'بث إلى التلفزيون (Chromecast / Google TV)', run: castStart });
+    if (canAirPlay())
+        o.push({ icon: 'airplay', label: 'AirPlay (Apple TV وتلفزيونات AirPlay)', run: () => { try {
+                video.webkitShowPlaybackTargetPicker();
+            }
+            catch (e) {
+                toast('AirPlay غير متاح');
+            } } });
+    if (isAndroid || isIOS)
+        o.push({ icon: 'ext', label: 'فتح في مشغل خارجي (VLC / تطبيقات البث)', run: openExternal });
+    if (navigator.share)
+        o.push({ icon: 'share', label: 'مشاركة رابط البث', run: () => navigator.share({ title: $('plTitle').textContent || 'Alameeere Movies', url: streamUrl }).catch(() => { }) });
+    o.push({ icon: 'copy', label: 'نسخ رابط البث', run: () => __awaiter(this, void 0, void 0, function* () { return toast((yield copyText(streamUrl)) ? 'تم نسخ الرابط' : 'تعذر النسخ'); }) });
+    return o;
+}
+function openShare() {
+    if (!streamUrl) {
+        toast('انتظر تجهيز الفيديو أولاً');
+        return;
+    }
+    hideUI();
+    panelOpen = true;
+    activePanel = $('plShare');
+    panelOrigin = $('plCast');
+    const box = $('plOpts');
+    box.innerHTML = '';
+    shareOptions().forEach(opt => {
         const b = document.createElement('button');
         b.className = 'pl-opt';
         b.tabIndex = 0;
         b.innerHTML = `<i class="ic">${ICON[opt.icon]}</i><span>${opt.label}</span>`;
         b.onclick = () => { closePanel(true); opt.run(); };
         box.appendChild(b);
-      });
-      activePanel.classList.add('open');
-      setTimeout(() => { const f = box.querySelector('button'); if (f) f.focus(); }, 60);
-    }
-
-    function nextEpisode() {
-      const s = playerSeries;
-      if (!s) return null;
-      const all = s.episodes.slice().sort((a, b) =>
-        seasonOrder(seasonNameOf(a)) - seasonOrder(seasonNameOf(b)) || seasonNameOf(a).localeCompare(seasonNameOf(b), 'ar') || episodeNumber(a) - episodeNumber(b));
-      const i = all.findIndex(e => e.realid === playerEpId);
-      return i >= 0 ? (all[i + 1] || null) : null;
-    }
-
-    // ----- Playback -----
-    function destroyHls() { if (hls) { hls.destroy(); hls = null; } }
-
-    function attachSource(url, token) {
-      const nativeHls = video.canPlayType('application/vnd.apple.mpegurl');
-      if (nativeHls && canAirPlay()) {
+    });
+    activePanel.classList.add('open');
+    const f = box.querySelector('button');
+    if (f)
+        fcs(f);
+}
+function prevEpisode() {
+    if (!playerSeries)
+        return null;
+    const all = allSorted(playerSeries);
+    const i = all.findIndex(e => e.realid === playerEpId);
+    return i > 0 ? all[i - 1] : null;
+}
+function nextEpisode() {
+    const s = playerSeries;
+    if (!s)
+        return null;
+    const all = s.episodes.slice().sort((a, b) => seasonOrder(seasonNameOf(a)) - seasonOrder(seasonNameOf(b)) || seasonNameOf(a).localeCompare(seasonNameOf(b), 'ar') || episodeNumber(a) - episodeNumber(b));
+    const i = all.findIndex(e => e.realid === playerEpId);
+    return i >= 0 ? (all[i + 1] || null) : null;
+}
+function destroyHls() { if (hls) {
+    hls.destroy();
+    hls = null;
+} }
+function attachSource(url, token) {
+    const nativeHls = video.canPlayType('application/vnd.apple.mpegurl');
+    if (nativeHls && canAirPlay()) {
         video.src = url;
-        video.play().catch(() => {});
-      } else if (window.Hls && Hls.isSupported()) {
-        hls = new Hls({ maxBufferLength: 30, maxMaxBufferLength: 60, backBufferLength: 30, enableWorker: true });
+        video.play().catch(() => { });
+    }
+    else if (!window.Hls && !video.canPlayType('application/vnd.apple.mpegurl')) {
+        loadHls().then(() => { if (token === plToken)
+            attachSource(url, token); }, () => { setLoading(false); toast(ICON.warn, true); });
+        return;
+    }
+    else if (window.Hls && Hls.isSupported()) {
+        hls = new Hls({ maxBufferLength: 20, maxMaxBufferLength: 40, maxBufferSize: 30 * 1000 * 1000, backBufferLength: 10, capLevelToPlayerSize: true, enableWorker: !isOld, lowLatencyMode: false });
         hls.loadSource(url);
         hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { buildQualities(); video.play().catch(() => {}); });
+        hls.on(Hls.Events.MANIFEST_PARSED, () => { buildQualities(); video.play().catch(() => { }); });
         hls.on(Hls.Events.ERROR, (_, d) => {
-          if (!d.fatal || token !== plToken) return;
-          if (d.type === Hls.ErrorTypes.NETWORK_ERROR && netRetries++ < 3) hls.startLoad();
-          else if (d.type === Hls.ErrorTypes.MEDIA_ERROR && netRetries++ < 3) hls.recoverMediaError();
-          else { setLoading(false); toast(ICON.warn, true); }
+            if (!d.fatal || token !== plToken)
+                return;
+            if (d.type === Hls.ErrorTypes.NETWORK_ERROR && netRetries++ < 3)
+                hls.startLoad();
+            else if (d.type === Hls.ErrorTypes.MEDIA_ERROR && netRetries++ < 3)
+                hls.recoverMediaError();
+            else {
+                setLoading(false);
+                toast(ICON.warn, true);
+            }
         });
-      } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    }
+    else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = url;
-        video.play().catch(() => {});
-      } else {
-        setLoading(false); toast('المتصفح لا يدعم التشغيل');
-      }
+        video.play().catch(() => { });
     }
-
-    async function playMovie(realid, title, series = null, item = null) {
-      const token = ++plToken;
-      playerSeries = series;
-      playerItem = series || item;
-      playerEpId = realid;
-      streamUrl = '';
-      if (series) markSeen(realid);
-      plSeason = null;
-      if (series && !series.loadPromise) startLoad(series);
-
-      destroyHls();
-      video.pause();
-      video.removeAttribute('src');
-      video.load();
-
-      $('plTitle').textContent = title || '';
-      modal.classList.add('show');
-      document.body.style.overflow = 'hidden';
-      setProg(0);
-      $('plBuf').style.transform = 'scaleX(0)';
-      $('plCur').textContent = '0:00'; $('plDur').textContent = '0:00'; lastSec = -1; lastDur = -1;
-      $('plQuality').style.display = 'none'; qList = []; qPos = 0; netRetries = 0;
-      $('plEpisodes').style.display = series ? 'flex' : 'none';
-      $('plFav').style.display = playerItem ? 'flex' : 'none';
-      syncPlayerFav();
-      closePanel(true);
-      setLoading(true);
-      showUI();
-
-      try {
-        const res = await fetch(`${API}?action=stream&realid=${realid}`);
-        const data = await res.json();
-        if (token !== plToken) return;
-        if (!data.url) { setLoading(false); toast('تعذر استخراج رابط المشاهدة'); return; }
-        streamUrl = data.url;
-        attachSource(data.url, token);
-      } catch (e) {
-        if (token !== plToken) return;
-        setLoading(false); toast('حدث خطأ أثناء جلب الفيديو');
-      }
+    else {
+        setLoading(false);
+        toast('المتصفح لا يدعم التشغيل');
     }
-
-    function closePlayer() {
-      plToken++;
-      modal.classList.remove('show', 'ui-on', 'loading');
-      closePanel(true);
-      video.pause();
-      destroyHls();
-      video.removeAttribute('src');
-      video.load();
-      if (isFs()) { try { (document.exitFullscreen || document.webkitExitFullscreen).call(document); } catch (e) {} }
-      try { screen.orientation.unlock(); } catch (e) {}
-      document.body.style.overflow = '';
-      playerSeries = null;
-      playerItem = null;
-      streamUrl = '';
-    }
-
-    // ----- Wiring -----
-    $('plClose').onclick = closePlayer;
-    $('plPlay').onclick = togglePlay;
-    $('plBack').onclick = () => skip(-10);
-    $('plFwd').onclick = () => skip(10);
-    $('plMute').onclick = () => { video.muted = !video.muted; if (!video.muted && video.volume === 0) video.volume = 0.5; showUI(); };
-    $('plFs').onclick = toggleFs;
-    $('plAspect').onclick = cycleAspect;
-    $('plQuality').onclick = cycleQuality;
-    $('plEpisodes').onclick = openPanel;
-    $('plPanelClose').onclick = () => closePanel();
-    $('plShareClose').onclick = () => closePanel();
-    $('plCast').onclick = openShare;
-    $('plFav').onclick = () => { if (playerItem) toggleFav(playerItem); };
-    $('plAspectIc').innerHTML = ASPECTS[0].icon;
-
-    video.addEventListener('play', () => { $('plPlayIc').innerHTML = ICON.pause; showUI(); });
-    video.addEventListener('pause', () => { $('plPlayIc').innerHTML = ICON.play; if (plOpen()) showUI(); });
-    video.addEventListener('volumechange', () => { $('plMuteIc').innerHTML = (video.muted || video.volume === 0) ? ICON.mute : ICON.vol; });
-    video.addEventListener('waiting', () => setLoading(true));
-    ['playing', 'canplay', 'seeked'].forEach(ev => video.addEventListener(ev, () => setLoading(false)));
-    ['loadedmetadata', 'durationchange', 'timeupdate', 'seeked'].forEach(ev => video.addEventListener(ev, () => { if (uiOn) kick(); }));
-    video.addEventListener('ended', () => {
-      const n = nextEpisode();
-      if (n) playMovie(n.realid, n.title, playerSeries); else showUI();
-    });
-
-    // ===== Search & Categories =====
-    function loadCategory(slug, btn) {
-      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      if (searchMode) { searchMode = false; sq.id++; clearTimeout(sq.timer); if (sq.ctrl) sq.ctrl.abort(); sq.pool = new Map(); }
-      sInput.value = '';
-      favMode = slug === '__fav__';
-      currentCategory = favMode ? '' : slug;
-      loadMore(true);
-    }
-
-    function handleSearch(e) {
-      e.preventDefault();
-      clearTimeout(searchDebounce);
-      const v = sInput.value.trim();
-      if (v) runSearch(v, 0); else leaveSearch();
-      sInput.blur();
-    }
-
-    // ===== Remote Navigation =====
-    document.addEventListener('keydown', (e) => {
-      if (modal.classList.contains('show')) {
-        const ae = document.activeElement;
-        const onCtl = !!(ae && modal.contains(ae) && ae.tagName === 'BUTTON');
+}
+function playMovie(realid_1, title_1) {
+    return __awaiter(this, arguments, void 0, function* (realid, title, series = null, item = null) {
+        const token = ++plToken;
+        layerOpened();
+        playerSeries = series;
+        playerItem = series || item;
+        playerEpId = realid;
+        streamUrl = '';
+        if (series)
+            markSeen(realid);
+        plSeason = null;
+        if (series && !series.loadPromise)
+            startLoad(series);
+        destroyHls();
+        video.pause();
+        video.removeAttribute('src');
+        video.load();
+        $('plTitle').textContent = title || '';
+        modal.classList.add('show');
+        document.body.style.overflow = 'hidden';
+        setProg(0);
+        $('plBuf').style.transform = 'scaleX(0)';
+        $('plCur').textContent = '0:00';
+        $('plDur').textContent = '0:00';
+        lastSec = -1;
+        lastDur = -1;
+        $('plQuality').style.display = 'none';
+        qList = [];
+        qPos = 0;
+        netRetries = 0;
+        $('plEpisodes').style.display = series ? 'flex' : 'none';
+        $('plFav').style.display = playerItem ? 'flex' : 'none';
+        syncPlayerFav();
+        closePanel(true);
+        setLoading(true);
         showUI();
-        if (e.key === 'Escape' || e.key === 'Backspace') {
-          e.preventDefault();
-          if (panelOpen) closePanel();
-          else if (isFs()) toggleFs();
-          else if (onCtl) ae.blur();
-          else closePlayer();
-          return;
+        try {
+            const res = yield fetch(`${API}?action=stream&realid=${realid}`);
+            const data = yield res.json();
+            if (token !== plToken)
+                return;
+            if (!data.url) {
+                setLoading(false);
+                toast('تعذر استخراج رابط المشاهدة');
+                return;
+            }
+            streamUrl = data.url;
+            attachSource(data.url, token);
         }
-        if (!panelOpen && !onCtl) {
-          e.preventDefault();
-          if (e.key === 'ArrowRight') skip(10);
-          else if (e.key === 'ArrowLeft') skip(-10);
-          else if (e.key === 'ArrowUp') setVolume((video.muted ? 0 : video.volume) + 0.1);
-          else if (e.key === 'ArrowDown') setVolume((video.muted ? 0 : video.volume) - 0.1);
-          else if (e.key === ' ') togglePlay();
-          else if (e.key === 'Enter') { togglePlay(); $('plPlay').focus(); }
-          else if (e.key === 'f' || e.key === 'F') toggleFs();
-          else if (e.key === 'm' || e.key === 'M') $('plMute').click();
-          return;
+        catch (e) {
+            if (token !== plToken)
+                return;
+            setLoading(false);
+            toast('حدث خطأ أثناء جلب الفيديو');
         }
-        if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) return;
-      }
-
-      if (seriesModal.classList.contains('show')) {
-        if (e.key === 'Escape' || e.key === 'Backspace') { closeSeriesModal(); e.preventDefault(); return; }
-      }
-
-      const keys = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
-      if (!keys.includes(e.key)) return;
-      if (document.activeElement.tagName === "INPUT") return;
-
-      const scope = modal.classList.contains('show') ? (panelOpen ? (activePanel || $('plPanel')) : modal) : (seriesModal.classList.contains('show') ? seriesModal : document);
-      const focusable = Array.from(scope.querySelectorAll('button, [tabindex="0"]'))
-        .filter(el => el.offsetWidth > 0 && el.offsetHeight > 0 && !el.disabled && getComputedStyle(el).visibility !== 'hidden');
-      if (focusable.length === 0) return;
-
-      const current = document.activeElement;
-      if (!current || !focusable.includes(current)) { focusable[0].focus(); e.preventDefault(); return; }
-
-      e.preventDefault();
-      const curRect = current.getBoundingClientRect();
-      let best = null, minDist = Infinity;
-
-      focusable.forEach(el => {
-        if (el === current) return;
-        const rect = el.getBoundingClientRect();
-        const dx = (rect.left + rect.width/2) - (curRect.left + curRect.width/2);
-        const dy = (rect.top + rect.height/2) - (curRect.top + curRect.height/2);
-        let inDir = false, dist = Infinity;
-
-        if (e.key === "ArrowRight" && dx > 10) { inDir = true; dist = Math.abs(dx) + Math.abs(dy)*2; }
-        if (e.key === "ArrowLeft"  && dx < -10){ inDir = true; dist = Math.abs(dx) + Math.abs(dy)*2; }
-        if (e.key === "ArrowDown"  && dy > 10) { inDir = true; dist = Math.abs(dy) + Math.abs(dx)*2; }
-        if (e.key === "ArrowUp"    && dy < -10){ inDir = true; dist = Math.abs(dy) + Math.abs(dx)*2; }
-
-        if (inDir && dist < minDist) { minDist = dist; best = el; }
-      });
-
-      if (best) { best.focus(); best.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
     });
-
-    // ===== PWA =====
-    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+}
+function closePlayer(fromPop) {
+    plToken++;
+    modal.classList.remove('show', 'ui-on', 'loading');
+    closePanel(true);
+    video.pause();
+    destroyHls();
+    video.removeAttribute('src');
+    video.load();
+    if (isFs()) {
+        try {
+            (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        }
+        catch (e) { }
     }
-    let deferredInstall = null;
-    const installBtn = document.getElementById('installBtn');
-    window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredInstall = e; installBtn.style.display = 'flex'; });
-    installBtn.onclick = async () => {
-      if (!deferredInstall) return;
-      deferredInstall.prompt();
-      try { await deferredInstall.userChoice; } catch (e) {}
-      deferredInstall = null;
-      installBtn.style.display = 'none';
-    };
-    window.addEventListener('appinstalled', () => { installBtn.style.display = 'none'; });
-    const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
-    function dismissIosHint() { document.getElementById('iosHint').classList.remove('show'); try { localStorage.setItem('alm_ios_hint', '1'); } catch (e) {} }
     try {
-      if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !standalone && !localStorage.getItem('alm_ios_hint')) {
+        screen.orientation.unlock();
+    }
+    catch (e) { }
+    document.body.style.overflow = '';
+    playerSeries = null;
+    playerItem = null;
+    streamUrl = '';
+    resetScroll();
+    if (!fromPop)
+        layerClosed();
+}
+$('plClose').onclick = closePlayer;
+$('plPlay').onclick = togglePlay;
+$('plBack').onclick = () => skip(-10);
+$('plFwd').onclick = () => skip(10);
+$('plMute').onclick = () => { video.muted = !video.muted; if (!video.muted && video.volume === 0)
+    video.volume = 0.5; showUI(); };
+$('plFs').onclick = toggleFs;
+$('plAspect').onclick = cycleAspect;
+$('plQuality').onclick = cycleQuality;
+$('plEpisodes').onclick = openPanel;
+$('plPanelClose').onclick = () => closePanel();
+$('plShareClose').onclick = () => closePanel();
+$('plCast').onclick = openShare;
+$('plFav').onclick = () => { if (playerItem)
+    toggleFav(playerItem); };
+$('plAspectIc').innerHTML = ASPECTS[0].icon;
+video.addEventListener('play', () => { $('plPlayIc').innerHTML = ICON.pause; showUI(); });
+video.addEventListener('pause', () => { $('plPlayIc').innerHTML = ICON.play; if (plOpen())
+    showUI(); });
+video.addEventListener('volumechange', () => { $('plMuteIc').innerHTML = (video.muted || video.volume === 0) ? ICON.mute : ICON.vol; });
+video.addEventListener('waiting', () => setLoading(true));
+['playing', 'canplay', 'seeked'].forEach(ev => video.addEventListener(ev, () => setLoading(false)));
+['loadedmetadata', 'durationchange', 'timeupdate', 'seeked'].forEach(ev => video.addEventListener(ev, () => { if (uiOn)
+    kick(); }));
+video.addEventListener('ended', () => {
+    const n = nextEpisode();
+    if (n)
+        playMovie(n.realid, n.title, playerSeries);
+    else
+        showUI();
+});
+function loadCategory(slug, btn) {
+    document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (searchMode) {
+        searchMode = false;
+        sq.id++;
+        clearTimeout(sq.timer);
+        if (sq.ctrl)
+            sq.ctrl.abort();
+        sq.pool = new Map();
+    }
+    sInput.value = '';
+    favMode = slug === '__fav__';
+    currentCategory = favMode ? '' : slug;
+    loadMore(true);
+}
+function handleSearch(e) {
+    e.preventDefault();
+    clearTimeout(searchDebounce);
+    const v = sInput.value.trim();
+    if (v)
+        runSearch(v, 0);
+    else
+        leaveSearch();
+    sInput.blur();
+}
+let okDown = 0, okLong = false;
+function inPlayer() { return modal.classList.contains('show'); }
+function navScope() {
+    if (inPlayer())
+        return panelOpen ? (activePanel || $('plPanel')) : modal;
+    if (seriesModal.classList.contains('show'))
+        return seriesModal;
+    return document;
+}
+function navItems(scope) {
+    const all = scope.querySelectorAll('button, [tabindex="0"], input');
+    const out = [];
+    const vh = window.innerHeight || 720;
+    for (let i = 0; i < all.length; i++) {
+        const el = all[i];
+        if (el.disabled || el.offsetWidth === 0 || el.offsetHeight === 0)
+            continue;
+        if (el.tabIndex < 0 && el.tagName !== 'INPUT')
+            continue;
+        if (scope === modal && el.closest && el.closest('.pl-panel'))
+            continue;
+        const r = el.getBoundingClientRect();
+        if (r.bottom < -vh || r.top > vh * 2)
+            continue;
+        out.push({ el, r });
+    }
+    return out;
+}
+function navMove(dir, e, from) {
+    const scope = navScope();
+    const items = navItems(scope);
+    if (!items.length)
+        return;
+    const cur = from || document.activeElement;
+    const ci = items.findIndex(x => x.el === cur);
+    if (ci < 0) {
+        fcs(items[0].el);
+        e.preventDefault();
+        return;
+    }
+    e.preventDefault();
+    const c = items[ci].r;
+    const cx = c.left + c.width / 2, cy = c.top + c.height / 2;
+    let best = null, min = Infinity;
+    for (let i = 0; i < items.length; i++) {
+        if (i === ci)
+            continue;
+        const r = items[i].r;
+        const dx = r.left + r.width / 2 - cx, dy = r.top + r.height / 2 - cy;
+        let d = Infinity;
+        const sameRow = Math.abs(dy) < Math.min(c.height, r.height) * 0.6;
+        if (dir === 'Right' && dx > 8 && sameRow)
+            d = dx + Math.abs(dy) * 2;
+        else if (dir === 'Left' && dx < -8 && sameRow)
+            d = -dx + Math.abs(dy) * 2;
+        else if (dir === 'Down' && dy > 8)
+            d = dy + Math.abs(dx) * 2;
+        else if (dir === 'Up' && dy < -8)
+            d = -dy + Math.abs(dx) * 2;
+        if (d < min) {
+            min = d;
+            best = items[i].el;
+        }
+    }
+    if (best) {
+        fcs(best);
+        if (best.closest && best.closest('.categories, .season-tabs, .pl-chips')) {
+            try {
+                best.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+            }
+            catch (e) { }
+        }
+        if (scope === document) {
+            const r = best.getBoundingClientRect(), vh = window.innerHeight;
+            const hdr = 60;
+            if (r.top < hdr)
+                window.scrollBy(0, r.top - hdr - 12);
+            else if (r.bottom > vh)
+                window.scrollBy(0, r.bottom - vh + 16);
+        }
+        else if (scope === seriesModal) {
+            const box = best.closest ? best.closest('.episodes-grid, .season-tabs') : null;
+            if (box) {
+                if (box.classList.contains('episodes-grid')) {
+                    if (best.offsetTop < box.scrollTop + 4 || best.offsetTop + best.offsetHeight > box.scrollTop + box.clientHeight)
+                        centerIn(box, best);
+                }
+                else
+                    best.scrollIntoView && best.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+            }
+        }
+        else if (scope !== modal) {
+            const box = best.closest ? best.closest('.pl-eps, .pl-opts') : null;
+            if (box && (best.offsetTop < box.scrollTop || best.offsetTop + best.offsetHeight > box.scrollTop + box.clientHeight))
+                centerIn(box, best);
+        }
+        resetScroll();
+    }
+    else if (dir === 'Up' && cur && cur.tagName !== 'INPUT') {
+        if (scope === document && window.pageYOffset > 0)
+            window.scrollTo(0, 0);
+    }
+}
+function playerKey(k, e) {
+    const ae = document.activeElement;
+    const onCtl = !!(ae && modal.contains(ae) && ae.tagName === 'BUTTON');
+    showUI();
+    if (k === 'Back') {
+        e.preventDefault();
+        if (panelOpen)
+            closePanel();
+        else if (isFs())
+            toggleFs();
+        else if (onCtl && uiOn && !video.paused && false)
+            ae.blur();
+        else
+            closePlayer();
+        return true;
+    }
+    if (k === 'PlayPause') {
+        togglePlay();
+        e.preventDefault();
+        return true;
+    }
+    if (k === 'Play') {
+        video.play().catch(() => { });
+        e.preventDefault();
+        return true;
+    }
+    if (k === 'Pause') {
+        video.pause();
+        e.preventDefault();
+        return true;
+    }
+    if (k === 'Stop') {
+        closePlayer();
+        e.preventDefault();
+        return true;
+    }
+    if (k === 'FF') {
+        skip(30);
+        e.preventDefault();
+        return true;
+    }
+    if (k === 'RW') {
+        skip(-30);
+        e.preventDefault();
+        return true;
+    }
+    if (k === 'Next' || k === 'Prev') {
+        const n = k === 'Next' ? nextEpisode() : prevEpisode();
+        if (n)
+            playMovie(n.realid, n.title, playerSeries);
+        e.preventDefault();
+        return true;
+    }
+    if (panelOpen)
+        return false;
+    if (k === 'F') {
+        toggleFs();
+        e.preventDefault();
+        return true;
+    }
+    if (k === 'M') {
+        $('plMute').click();
+        e.preventDefault();
+        return true;
+    }
+    if (!onCtl) {
+        e.preventDefault();
+        if (k === 'Right')
+            skip(10);
+        else if (k === 'Left')
+            skip(-10);
+        else if (k === 'Up')
+            setVolume((video.muted ? 0 : video.volume) + 0.1);
+        else if (k === 'Down') {
+            showUI();
+            fcs($('plPlay'));
+        }
+        else if (k === 'Space' || k === 'Enter') {
+            togglePlay();
+            fcs($('plPlay'));
+        }
+        return true;
+    }
+    return false;
+}
+document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey || e.altKey || e.metaKey)
+        return;
+    const k = keyName(e);
+    if (!k)
+        return;
+    const ae = document.activeElement;
+    const typing = ae && ae.tagName === 'INPUT';
+    if (typing) {
+        if (k === 'Back' && e.key !== 'Escape')
+            return;
+        if (k === 'Down' || k === 'Up') {
+            ae.blur();
+            navMove(k, e, ae);
+            return;
+        }
+        else if (k === 'Enter' || k === 'Back') {
+            if (k === 'Back')
+                ae.blur();
+            return;
+        }
+        else
+            return;
+    }
+    if (inPlayer()) {
+        if (playerKey(k, e))
+            return;
+    }
+    else if (seriesModal.classList.contains('show') && k === 'Back') {
+        e.preventDefault();
+        closeSeriesModal();
+        return;
+    }
+    if (k === 'Up' || k === 'Down' || k === 'Left' || k === 'Right') {
+        navMove(k, e);
+        return;
+    }
+    if (k === 'Home' && !inPlayer()) {
+        window.scrollTo(0, 0);
+        return;
+    }
+    if (k === 'Back' && !inPlayer() && !seriesModal.classList.contains('show')) {
+        if (favMode || searchMode) {
+            e.preventDefault();
+            const b = document.querySelector('.cat-btn');
+            if (b)
+                b.click();
+            fcs(b);
+        }
+        return;
+    }
+    if (ae && ae.classList && ae.classList.contains('card') && (k === 'Menu' || k === 'F')) {
+        e.preventDefault();
+        if (ae._item)
+            toggleFav(ae._item);
+        return;
+    }
+    if ((k === 'Enter' || k === 'Space') && ae && ae.tagName !== 'BUTTON' && ae.tagName !== 'INPUT' && ae.getAttribute && ae.getAttribute('tabindex') === '0') {
+        e.preventDefault();
+        if (ae.classList.contains('card') && ae._item) {
+            if (e.repeat) {
+                if (!okLong && performance.now() - okDown > 650) {
+                    okLong = true;
+                    toggleFav(ae._item);
+                }
+            }
+            else {
+                okDown = performance.now();
+                okLong = false;
+            }
+        }
+        else
+            ae.click();
+    }
+});
+document.addEventListener('keyup', (e) => {
+    const k = keyName(e);
+    if (k !== 'Enter' && k !== 'Space')
+        return;
+    const ae = document.activeElement;
+    if (inPlayer() || !ae || !ae.classList || !ae.classList.contains('card') || ae.tagName === 'BUTTON')
+        return;
+    if (okLong) {
+        okLong = false;
+        return;
+    }
+    if (okDown) {
+        okDown = 0;
+        ae.click();
+    }
+});
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => { }));
+}
+let deferredInstall = null;
+const installBtn = document.getElementById('installBtn');
+window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredInstall = e; installBtn.style.display = 'flex'; });
+installBtn.onclick = () => __awaiter(void 0, void 0, void 0, function* () {
+    if (!deferredInstall)
+        return;
+    deferredInstall.prompt();
+    try {
+        yield deferredInstall.userChoice;
+    }
+    catch (e) { }
+    deferredInstall = null;
+    installBtn.style.display = 'none';
+});
+window.addEventListener('appinstalled', () => { installBtn.style.display = 'none'; });
+const standalone = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+function dismissIosHint() { document.getElementById('iosHint').classList.remove('show'); try {
+    localStorage.setItem('alm_ios_hint', '1');
+}
+catch (e) { } }
+try {
+    if (/iPhone|iPad|iPod/.test(navigator.userAgent) && !standalone && !localStorage.getItem('alm_ios_hint')) {
         setTimeout(() => document.getElementById('iosHint').classList.add('show'), 4000);
-      }
-    } catch (e) {}
+    }
+}
+catch (e) { }
+let mouseTimer, curHidden = false;
+document.addEventListener('mousemove', () => {
+    if (curHidden) {
+        document.body.style.cursor = '';
+        curHidden = false;
+    }
+    clearTimeout(mouseTimer);
+    if (modal.classList.contains('show'))
+        mouseTimer = setTimeout(() => { document.body.style.cursor = 'none'; curHidden = true; }, 3000);
+}, { passive: true });
 
-    let mouseTimer, curHidden = false;
-    document.addEventListener('mousemove', () => {
-      if (curHidden) { document.body.style.cursor = 'default'; curHidden = false; }
-      clearTimeout(mouseTimer);
-      mouseTimer = setTimeout(() => { document.body.style.cursor = 'none'; curHidden = true; }, 3000);
-    }, { passive: true });
   </script>
 </body>
 </html>
