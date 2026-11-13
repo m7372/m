@@ -531,6 +531,7 @@ function enterSite() {
         mainApp.style.display = 'block';
         fetchCategories();
         loadMore(true);
+        setTimeout(() => { loadHls().catch(() => { }); }, 1200);
         try {
             if (new URLSearchParams(location.search).get('fav') === '1')
                 document.getElementById('favCatBtn').click();
@@ -594,37 +595,80 @@ function cleanQuery(s) {
         .replace(/\s+/g, ' ').trim();
 }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
+const net = { ok: 0, fail: 0, last: '' };
+let inflight = 0;
+const waiters = [];
+function acquire() {
+    if (inflight < 4) {
+        inflight++;
+        return Promise.resolve();
+    }
+    return new Promise(r => waiters.push(r));
+}
+function release() { const w = waiters.shift(); if (w)
+    w();
+else
+    inflight--; }
 function fetchRetry(url_1) {
     return __awaiter(this, arguments, void 0, function* (url, tries = 3) {
-        for (let i = 0; i < tries; i++) {
-            try {
-                return yield fetchJSON(url);
+        yield acquire();
+        try {
+            for (let i = 0; i < tries; i++) {
+                try {
+                    const res = yield fetch(url);
+                    if (!res.ok)
+                        throw new Error('HTTP ' + res.status);
+                    const j = yield res.json();
+                    net.ok++;
+                    return j;
+                }
+                catch (e) {
+                    net.fail++;
+                    net.last = String(e && e.message || e);
+                    if (i < tries - 1)
+                        yield sleep(500 * (i + 1) * (i + 1));
+                }
             }
-            catch (e) {
-                if (i < tries - 1)
-                    yield sleep(350 * (i + 1));
-            }
+            return null;
         }
-        return null;
+        finally {
+            release();
+        }
     });
 }
 const searchUrl = (q, page) => `${API}?action=search&search=${encodeURIComponent(q)}&page=${page}`;
+const plain = s => String(s || '').replace(/[:：\-–—_|،,.!؟?()\[\]{}"'«»“”\/\\]+/g, ' ').replace(/\s+/g, ' ').trim();
+const noKind = s => s.replace(/^(مسلسل|فيلم|برنامج|انمي|أنمي)\s+/, '');
 function seriesBase(series) {
     return cleanQuery(series.infoName) || cleanQuery(series.title) || series.title;
 }
+function sameSeries(series, p) {
+    if (p.series_slug && p.series_slug === series.series_slug)
+        return true;
+    const a = normAr(p.series_info && p.series_info.name), b = normAr(series.infoName);
+    return !!(a && b && a === b);
+}
 function buildQueries(series, deep) {
-    var _a;
     const e0 = series.episodes[0];
-    const raw = [
+    const bases = [
         series.title.replace('الحلقة', '').trim(),
         cleanQuery(series.title),
         series.infoName,
         cleanQuery(series.infoName),
-        cleanQuery((_a = e0 === null || e0 === void 0 ? void 0 : e0.series_info) === null || _a === void 0 ? void 0 : _a.name),
-        cleanQuery(e0 === null || e0 === void 0 ? void 0 : e0.title)
+        cleanQuery(e0 && e0.series_info && e0.series_info.name),
+        cleanQuery(e0 && e0.title)
     ];
+    const raw = [];
+    bases.forEach(b => { raw.push(b); raw.push(plain(b)); });
+    const p = noKind(plain(seriesBase(series)));
+    raw.push(p);
+    const w = p.split(' ');
+    if (w.length > 3)
+        raw.push(w.slice(0, 3).join(' '));
+    if (w.length > 2)
+        raw.push(w.slice(0, 2).join(' '));
     const uniq = [...new Set(raw.map(q => (q || '').trim()).filter(q => q.length > 1))];
-    return uniq.slice(0, deep ? 6 : 4);
+    return uniq.slice(0, deep ? 10 : 7);
 }
 function badgeText(series) {
     const n = Math.max(series.episodes.length, series.cached || 0);
@@ -671,7 +715,7 @@ function scanQuery(series, q, deep) {
             }
             stalls = 0;
             fresh.forEach(p => seenQ.add(p.realid));
-            const mine = fresh.filter(p => p.series_slug === series.series_slug);
+            const mine = fresh.filter(p => sameSeries(series, p));
             if (mine.length) {
                 noMatch = 0;
                 addEpisodes(series, mine);
@@ -688,13 +732,19 @@ function startLoad(series, deep = false) {
     if (!series.completing)
         series.loading = true;
     const p = (() => __awaiter(this, void 0, void 0, function* () {
+        const f0 = net.fail;
         try {
-            for (const q of buildQueries(series, deep))
+            for (const q of buildQueries(series, deep)) {
+                const before = series.episodes.length;
                 yield scanQuery(series, q, deep);
+                if (series.episodes.length >= 3 && series.episodes.length === before)
+                    break;
+            }
         }
         catch (e) {
             console.error(e);
         }
+        series.scanFails = net.fail - f0;
         if (!series.completing)
             series.loading = false;
         series.countReady = true;
@@ -728,13 +778,28 @@ function gapsOf(series, probeNext) {
     });
     return out;
 }
+function derivedTitle(series, season, n) {
+    const known = series.episodes.filter(e => seasonNameOf(e) === season && episodeNumber(e) < 9999 && e.title);
+    const k = known[0] || series.episodes.filter(e => e.title && episodeNumber(e) < 9999)[0];
+    if (!k)
+        return '';
+    const t = String(k.title);
+    const re = /(الحلق[ةه]\s*)([\d٠-٩]+)/;
+    if (re.test(t))
+        return t.replace(re, (m, a) => a + n);
+    const k0 = episodeNumber(k);
+    return t.replace(new RegExp(k0 + '(?!.*\\d)'), String(n));
+}
 function findEpisode(series, season, n, multi) {
     return __awaiter(this, void 0, void 0, function* () {
         const base = seriesBase(series);
-        const qs = multi ? [`${base} ${season} الحلقة ${n}`, `${base} الحلقة ${n}`] : [`${base} الحلقة ${n}`, `${base} ${n}`];
+        const d = derivedTitle(series, season, n);
+        const raw = [d, plain(d), `${base} الحلقة ${n}`, `${plain(base)} الحلقة ${n}`, multi ? `${base} ${season} الحلقة ${n}` : '', `${noKind(plain(base))} ${n}`];
+        const qs = [...new Set(raw.filter(q => q && q.trim().length > 1))];
         for (const q of qs) {
             const data = yield fetchRetry(searchUrl(q, 1), 2);
-            const mine = ((data === null || data === void 0 ? void 0 : data.posts) || []).filter(p => p.series_slug === series.series_slug);
+            const posts = (data && data.posts) || [];
+            const mine = posts.filter(p => sameSeries(series, p));
             if (mine.length) {
                 addEpisodes(series, mine);
                 progress(series);
@@ -748,7 +813,7 @@ function findEpisode(series, season, n, multi) {
 function fillGaps(series, deep) {
     return __awaiter(this, void 0, void 0, function* () {
         const multi = Object.keys(groupSeasons(series)).length > 1;
-        const queue = gapsOf(series, deep).slice(0, deep ? 160 : 70);
+        const queue = gapsOf(series, deep).slice(0, deep ? 120 : 40);
         const worker = () => __awaiter(this, void 0, void 0, function* () {
             while (queue.length) {
                 const g = queue.shift();
@@ -757,21 +822,23 @@ function fillGaps(series, deep) {
                 yield findEpisode(series, g.season, g.n, multi);
             }
         });
-        yield Promise.all([worker(), worker(), worker()]);
+        yield Promise.all([worker(), worker()]);
     });
 }
 function completeSeries(series_1) {
     return __awaiter(this, arguments, void 0, function* (series, deep = false) {
         if (series.completing)
             return;
-        if (!deep && series.gapsDone && series.loadPromise)
+        const partial = (series.scanFails || 0) > 0 || series.episodes.length < (series.cached || 0);
+        if (!deep && series.gapsDone && series.loadPromise && !partial)
             return;
         series.completing = true;
         series.loading = true;
         series.phase = 'scan';
+        series.runFail0 = net.fail;
         progress(series);
         try {
-            yield startLoad(series, deep);
+            yield startLoad(series, deep || partial);
             series.phase = 'gaps';
             progress(series);
             yield fillGaps(series, deep);
@@ -783,6 +850,7 @@ function completeSeries(series_1) {
         series.completing = false;
         series.loading = false;
         series.phase = '';
+        series.runFails = net.fail - (series.runFail0 || 0);
         series.countReady = true;
         if (series.episodes.length) {
             saveCount(series.series_slug, series.episodes.length);
@@ -1503,7 +1571,8 @@ function updateLoadStatus() {
         const miss = gapsOf(s).length;
         if (miss) {
             st.className = 'sm-status show warn';
-            st.textContent = `تنقص ${miss} حلقة — اضغط «جلب الحلقات» أو اضغط على الحلقة المنقطة للبحث عنها.`;
+            const nf = s.runFails ? ` (تعذّر الاتصال بالسيرفر ${s.runFails} مرة)` : '';
+            st.textContent = `تنقص ${miss} حلقة${nf} — اضغط «جلب الحلقات» أو اضغط على الحلقة المنقطة للبحث عنها.`;
         }
         else
             st.className = 'sm-status';
@@ -1805,6 +1874,7 @@ function fmt(sec) {
     const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = Math.floor(sec % 60);
     return (h ? h + ':' + String(m).padStart(2, '0') : m) + ':' + String(s).padStart(2, '0');
 }
+const HLS_URLS = ['https://cdn.jsdelivr.net/npm/hls.js@1.5/dist/hls.min.js', 'https://unpkg.com/hls.js@1.5/dist/hls.min.js', 'https://cdnjs.cloudflare.com/ajax/libs/hls.js/1.5.20/hls.min.js'];
 let hlsLoad = null;
 function loadHls() {
     if (window.Hls)
@@ -1812,11 +1882,27 @@ function loadHls() {
     if (hlsLoad)
         return hlsLoad;
     hlsLoad = new Promise((resolve, reject) => {
-        const sc = document.createElement('script');
-        sc.src = 'https://cdn.jsdelivr.net/npm/hls.js@1.5/dist/hls.min.js';
-        sc.onload = () => resolve();
-        sc.onerror = () => { hlsLoad = null; reject(new Error('hls')); };
-        document.head.appendChild(sc);
+        let i = 0;
+        const next = () => {
+            if (window.Hls)
+                return resolve();
+            if (i >= HLS_URLS.length) {
+                hlsLoad = null;
+                return reject(new Error('hls'));
+            }
+            const sc = document.createElement('script');
+            let done = false;
+            const fail = () => { if (done)
+                return; done = true; if (sc.parentNode)
+                sc.parentNode.removeChild(sc); next(); };
+            sc.src = HLS_URLS[i++];
+            sc.onload = () => { if (done)
+                return; done = true; window.Hls ? resolve() : next(); };
+            sc.onerror = fail;
+            setTimeout(fail, 9000);
+            document.head.appendChild(sc);
+        };
+        next();
     });
     return hlsLoad;
 }
@@ -2325,43 +2411,60 @@ function destroyHls() { if (hls) {
     hls.destroy();
     hls = null;
 } }
+function playNative(url) {
+    video.src = url;
+    const p = video.play();
+    if (p && p.catch)
+        p.catch(() => { });
+}
 function attachSource(url, token) {
-    const nativeHls = video.canPlayType('application/vnd.apple.mpegurl');
-    if (nativeHls && canAirPlay()) {
-        video.src = url;
-        video.play().catch(() => { });
-    }
-    else if (!window.Hls && !video.canPlayType('application/vnd.apple.mpegurl')) {
-        loadHls().then(() => { if (token === plToken)
-            attachSource(url, token); }, () => { setLoading(false); toast(ICON.warn, true); });
+    const MSE = !!(window.MediaSource || window.WebKitMediaSource);
+    const nativeHls = !!video.canPlayType('application/vnd.apple.mpegurl');
+    if ((nativeHls && canAirPlay()) || !MSE) {
+        playNative(url);
         return;
     }
-    else if (window.Hls && Hls.isSupported()) {
-        hls = new Hls({ maxBufferLength: 20, maxMaxBufferLength: 40, maxBufferSize: 30 * 1000 * 1000, backBufferLength: 10, capLevelToPlayerSize: true, enableWorker: !isOld, lowLatencyMode: false });
-        hls.loadSource(url);
-        hls.attachMedia(video);
-        hls.on(Hls.Events.MANIFEST_PARSED, () => { buildQualities(); video.play().catch(() => { }); });
-        hls.on(Hls.Events.ERROR, (_, d) => {
-            if (!d.fatal || token !== plToken)
-                return;
-            if (d.type === Hls.ErrorTypes.NETWORK_ERROR && netRetries++ < 3)
-                hls.startLoad();
-            else if (d.type === Hls.ErrorTypes.MEDIA_ERROR && netRetries++ < 3)
-                hls.recoverMediaError();
-            else {
-                setLoading(false);
-                toast(ICON.warn, true);
-            }
-        });
+    if (!window.Hls) {
+        loadHls().then(() => { if (token === plToken)
+            attachSource(url, token); }, () => { if (token !== plToken)
+            return; if (nativeHls)
+            playNative(url);
+        else {
+            setLoading(false);
+            toast('تعذر تحميل مشغل الفيديو — تحقق من الإنترنت');
+        } });
+        return;
     }
-    else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-        video.src = url;
-        video.play().catch(() => { });
+    if (!Hls.isSupported()) {
+        if (nativeHls)
+            playNative(url);
+        else {
+            setLoading(false);
+            toast('المتصفح لا يدعم التشغيل');
+        }
+        return;
     }
-    else {
-        setLoading(false);
-        toast('المتصفح لا يدعم التشغيل');
-    }
+    hls = new Hls({ maxBufferLength: 20, maxMaxBufferLength: 40, maxBufferSize: 30 * 1000 * 1000, backBufferLength: 10, capLevelToPlayerSize: true, enableWorker: !isOld, lowLatencyMode: false, manifestLoadingMaxRetry: 3, levelLoadingMaxRetry: 3, fragLoadingMaxRetry: 4 });
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => { buildQualities(); const p = video.play(); if (p && p.catch)
+        p.catch(() => { }); });
+    hls.on(Hls.Events.ERROR, (_, d) => {
+        if (!d.fatal || token !== plToken)
+            return;
+        if (d.type === Hls.ErrorTypes.NETWORK_ERROR && netRetries++ < 3)
+            hls.startLoad();
+        else if (d.type === Hls.ErrorTypes.MEDIA_ERROR && netRetries++ < 3)
+            hls.recoverMediaError();
+        else if (nativeHls) {
+            destroyHls();
+            playNative(url);
+        }
+        else {
+            setLoading(false);
+            toast(ICON.warn, true);
+        }
+    });
 }
 function playMovie(realid_1, title_1) {
     return __awaiter(this, arguments, void 0, function* (realid, title, series = null, item = null) {
@@ -2411,6 +2514,11 @@ function playMovie(realid_1, title_1) {
             }
             streamUrl = data.url;
             attachSource(data.url, token);
+            clearTimeout(window.__plWatch);
+            window.__plWatch = setTimeout(() => {
+                if (token === plToken && modal.classList.contains('loading') && video.readyState < 3)
+                    toast('التحميل بطيء — جرّب زر البث/المشاركة (VLC)');
+            }, 25000);
         }
         catch (e) {
             if (token !== plToken)

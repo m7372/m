@@ -1,9 +1,9 @@
 /* Alameeere Movies — service worker
    - صفحة التطبيق والأيقونات: تُخزَّن للعمل السريع/دون اتصال
    - الـ API والفيديو (m3u8/ts) والبوسترات: لا تُخزَّن أبداً */
-const VER = 'alm-v2';
+const VER = 'alm-v3';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/logo.png', './icons/favicon-48.png', './icons/apple-touch-icon.png'];
-const LIB_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net'];
+const LIB_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com', 'cdn.jsdelivr.net', 'unpkg.com', 'cdnjs.cloudflare.com'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VER).then((c) => Promise.all(SHELL.map((u) => c.add(u).catch(() => {})))).then(() => self.skipWaiting()));
